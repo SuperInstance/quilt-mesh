@@ -1,0 +1,12 @@
+[package]
+name = "quilt-mesh"
+version = "0.1.0"
+edition = "2021"
+description = "A broker-less, CRDT-based mesh protocol for Quilt cells."
+license = "MIT"
+
+[dependencies]
+# Real implementation would use:
+# serde = { version = "1.0", features = ["derive"] }
+# serde_json = "1.0"
+# tokio = { version = "1", features = ["full"] }
