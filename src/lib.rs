@@ -32,7 +32,7 @@ pub struct RoomId(pub String);
 pub struct PeerId(pub String);
 
 /// A Lamport clock for ordering events across the mesh.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Lamport(pub u64);
 
 impl Lamport {
@@ -93,7 +93,6 @@ pub enum ApplyResult {
 
 /// The mesh: a collection of rooms, each with its own set of cells
 /// and a set of peers.
-#[derive(Default)]
 pub struct Mesh {
     rooms: HashMap<RoomId, RoomState>,
     /// The local peer's id.
@@ -102,7 +101,12 @@ pub struct Mesh {
     clock: Lamport,
 }
 
-#[derive(Default)]
+impl Mesh {
+    pub fn new(me: PeerId) -> Self {
+        Self { rooms: HashMap::new(), me, clock: Lamport(0) }
+    }
+}
+
 struct RoomState {
     /// Cells the local peer has in this room.
     cells: HashMap<CellId, CellState>,
@@ -112,11 +116,17 @@ struct RoomState {
     versions: HashMap<PeerId, Lamport>,
 }
 
-impl Mesh {
-    pub fn new(me: PeerId) -> Self {
-        Self { me, clock: Lamport(0), ..Default::default() }
+impl Default for RoomState {
+    fn default() -> Self {
+        Self {
+            cells: HashMap::new(),
+            peers: BTreeSet::new(),
+            versions: HashMap::new(),
+        }
     }
+}
 
+impl Mesh {
     /// Set a cell value. The event is created and broadcast to the
     /// room. Returns the event for inspection.
     pub fn set(&mut self, room: &RoomId, cell: CellId, value: Vec<u8>) -> CellEvent {
