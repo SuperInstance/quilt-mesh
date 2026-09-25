@@ -1,4 +1,10 @@
 node_modules/
-outputs/
+outputs/*
+!outputs/bazaar_receipts.json
+!outputs/elites.json
+!outputs/loom_foundry_snapshot.json
+!outputs/drift_receipts.json
+!outputs/drift_trace.jsonl
+!outputs/doctrine_drift.png
 *.log
 .env

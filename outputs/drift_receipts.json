@@ -1,0 +1,659 @@
+{
+ "meta": {
+  "at": "2026-09-25T22:49:09.333Z",
+  "loom": "divergence-foundry offline",
+  "minds": [
+   "A",
+   "B"
+  ]
+ },
+ "foundry": [
+  {
+   "kind": "foundry-drift",
+   "target": "mines_safe",
+   "crowns": 3,
+   "families": 2,
+   "familyMix": {
+    "mask_scan": 2,
+    "backtrack": 1
+   },
+   "firstEntry": {
+    "mask_scan": 1,
+    "backtrack": 7
+   },
+   "entropyEarly": 0.918,
+   "entropyLate": 0,
+   "drift": -0.918,
+   "voices": {
+    "mech": 3
+   }
+  },
+  {
+   "kind": "foundry-drift",
+   "target": "reversi_flips",
+   "crowns": 7,
+   "families": 4,
+   "familyMix": {
+    "ray_loop": 1,
+    "rec_ray": 1,
+    "flat_index": 2,
+    "fold_dirs": 3
+   },
+   "firstEntry": {
+    "ray_loop": 1,
+    "rec_ray": 10,
+    "flat_index": 3,
+    "fold_dirs": 13
+   },
+   "entropyEarly": 1.5,
+   "entropyLate": 0,
+   "drift": -1.5,
+   "voices": {
+    "mech": 7
+   }
+  },
+  {
+   "kind": "foundry-drift",
+   "target": "life_step",
+   "crowns": 8,
+   "families": 4,
+   "familyMix": {
+    "transposed": 2,
+    "offset_fold": 3,
+    "flat_kernel": 1,
+    "nested_scan": 2
+   },
+   "firstEntry": {
+    "transposed": 1,
+    "offset_fold": 2,
+    "flat_kernel": 10,
+    "nested_scan": 4
+   },
+   "entropyEarly": 1.906,
+   "entropyLate": 0,
+   "drift": -1.906,
+   "voices": {
+    "mech": 8
+   }
+  },
+  {
+   "kind": "foundry-drift",
+   "target": "hearts_trick",
+   "crowns": 11,
+   "families": 4,
+   "familyMix": {
+    "for_scan": 3,
+    "sort_stable": 3,
+    "filter_max": 2,
+    "fold_reduce": 3
+   },
+   "firstEntry": {
+    "for_scan": 1,
+    "sort_stable": 2,
+    "filter_max": 9,
+    "fold_reduce": 17
+   },
+   "entropyEarly": 1.561,
+   "entropyLate": 0,
+   "drift": -1.561,
+   "voices": {
+    "mech": 11
+   }
+  },
+  {
+   "kind": "foundry-drift",
+   "target": "holdem_cat",
+   "crowns": 6,
+   "families": 3,
+   "familyMix": {
+    "run_pattern": 2,
+    "bitset": 2,
+    "bucket_chain": 2
+   },
+   "firstEntry": {
+    "run_pattern": 1,
+    "bitset": 4,
+    "bucket_chain": 9
+   },
+   "entropyEarly": 1.585,
+   "entropyLate": 0,
+   "drift": -1.585,
+   "voices": {
+    "mech": 6
+   }
+  },
+  {
+   "kind": "foundry-drift",
+   "target": "pager_band",
+   "crowns": 3,
+   "families": 3,
+   "familyMix": {
+    "boolean_index": 1,
+    "rules_table": 1,
+    "ladder": 1
+   },
+   "firstEntry": {
+    "boolean_index": 1,
+    "rules_table": 8,
+    "ladder": 2
+   },
+   "entropyEarly": 1.585,
+   "entropyLate": 0,
+   "drift": -1.585,
+   "voices": {
+    "mech": 3
+   }
+  },
+  {
+   "kind": "foundry-drift",
+   "target": "witness_fnv",
+   "crowns": 4,
+   "families": 3,
+   "familyMix": {
+    "bigint_fold": 2,
+    "hilo32": 1,
+    "word_pairs": 1
+   },
+   "firstEntry": {
+    "bigint_fold": 1,
+    "hilo32": 13,
+    "word_pairs": 9
+   },
+   "entropyEarly": 0.918,
+   "entropyLate": 0,
+   "drift": -0.918,
+   "voices": {
+    "mech": 4
+   }
+  },
+  {
+   "kind": "foundry-drift",
+   "target": "cosine_sparse",
+   "crowns": 3,
+   "families": 3,
+   "familyMix": {
+    "sorted_two_pointer": 1,
+    "a_key_scan": 1,
+    "union_set": 1
+   },
+   "firstEntry": {
+    "sorted_two_pointer": 1,
+    "a_key_scan": 5,
+    "union_set": 4
+   },
+   "entropyEarly": 1.585,
+   "entropyLate": 0,
+   "drift": -1.585,
+   "voices": {
+    "mech": 3
+   }
+  },
+  {
+   "kind": "foundry-drift",
+   "target": "hand_eval5",
+   "crowns": 3,
+   "families": 3,
+   "familyMix": {
+    "bit_count_scan": 1,
+    "count_entries": 1,
+    "sorted_runs": 1
+   },
+   "firstEntry": {
+    "bit_count_scan": 1,
+    "count_entries": 5,
+    "sorted_runs": 2
+   },
+   "entropyEarly": 1.585,
+   "entropyLate": 0,
+   "drift": -1.585,
+   "voices": {
+    "mech": 3
+   }
+  },
+  {
+   "kind": "foundry-drift",
+   "target": "gate_law",
+   "crowns": 3,
+   "families": 3,
+   "familyMix": {
+    "math_max_ternary": 1,
+    "sorted_index": 1,
+    "reduce_carrier": 1
+   },
+   "firstEntry": {
+    "math_max_ternary": 1,
+    "sorted_index": 4,
+    "reduce_carrier": 2
+   },
+   "entropyEarly": 1.585,
+   "entropyLate": 0,
+   "drift": -1.585,
+   "voices": {
+    "mech": 3
+   }
+  }
+ ],
+ "edges": [
+  {
+   "from": "A",
+   "to": "B",
+   "family": "bigint_fold",
+   "attempts": 2,
+   "woven": 2,
+   "hashes": [
+    "aa28e37705",
+    "1a40c09143"
+   ]
+  },
+  {
+   "from": "A",
+   "to": "B",
+   "family": "word_pairs",
+   "attempts": 1,
+   "woven": 0,
+   "hashes": [
+    "9a04940bda"
+   ]
+  },
+  {
+   "from": "B",
+   "to": "A",
+   "family": "word_pairs",
+   "attempts": 1,
+   "woven": 0,
+   "hashes": [
+    "9a04940bda"
+   ]
+  },
+  {
+   "from": "B",
+   "to": "A",
+   "family": "hilo32",
+   "attempts": 1,
+   "woven": 1,
+   "hashes": [
+    "3d237a99ef"
+   ]
+  },
+  {
+   "from": "B",
+   "to": "A",
+   "family": "traded:bigint_fold",
+   "attempts": 2,
+   "woven": 0,
+   "hashes": [
+    "trade-aa28e37705",
+    "trade-1a40c09143"
+   ]
+  }
+ ],
+ "adoption": [
+  {
+   "kind": "doctrine-adoption",
+   "house": "B",
+   "family": "bigint_fold",
+   "from": "A",
+   "adopted": false,
+   "note": "traded family woven but not (yet) doctrine",
+   "row_hash": "0xad058c7b7907ac90"
+  },
+  {
+   "kind": "doctrine-adoption",
+   "house": "A",
+   "family": "hilo32",
+   "from": "B",
+   "adopted": false,
+   "note": "traded family woven but not (yet) doctrine",
+   "row_hash": "0xf1b65e00d8354ee6"
+  }
+ ],
+ "summary": {
+  "kind": "drift-verdict",
+  "foundryTargets": 10,
+  "driftTargets": 5,
+  "entropyWidening": 0,
+  "entropyNarrowing": 5,
+  "tradeEdges": 5,
+  "wovenTotal": 3,
+  "caughtTotal": 4,
+  "adoptionChecked": 2,
+  "adoptionYes": 0,
+  "verdict": "foundry entropy NARROWS (early crowns dominate) | bazaar: 5 trade edges, woven rate 0.429",
+  "row_hash": "0x71d5c4acdfdb80c1"
+ },
+ "receipts": [
+  {
+   "kind": "foundry-drift",
+   "target": "mines_safe",
+   "crowns": 3,
+   "families": 2,
+   "familyMix": {
+    "mask_scan": 2,
+    "backtrack": 1
+   },
+   "firstEntry": {
+    "mask_scan": 1,
+    "backtrack": 7
+   },
+   "entropyEarly": 0.918,
+   "entropyLate": 0,
+   "drift": -0.918,
+   "voices": {
+    "mech": 3
+   },
+   "row_hash": "0x182cbfbc6bac52b3"
+  },
+  {
+   "kind": "foundry-drift",
+   "target": "reversi_flips",
+   "crowns": 7,
+   "families": 4,
+   "familyMix": {
+    "ray_loop": 1,
+    "rec_ray": 1,
+    "flat_index": 2,
+    "fold_dirs": 3
+   },
+   "firstEntry": {
+    "ray_loop": 1,
+    "rec_ray": 10,
+    "flat_index": 3,
+    "fold_dirs": 13
+   },
+   "entropyEarly": 1.5,
+   "entropyLate": 0,
+   "drift": -1.5,
+   "voices": {
+    "mech": 7
+   },
+   "row_hash": "0x073f28322a4086f2"
+  },
+  {
+   "kind": "foundry-drift",
+   "target": "life_step",
+   "crowns": 8,
+   "families": 4,
+   "familyMix": {
+    "transposed": 2,
+    "offset_fold": 3,
+    "flat_kernel": 1,
+    "nested_scan": 2
+   },
+   "firstEntry": {
+    "transposed": 1,
+    "offset_fold": 2,
+    "flat_kernel": 10,
+    "nested_scan": 4
+   },
+   "entropyEarly": 1.906,
+   "entropyLate": 0,
+   "drift": -1.906,
+   "voices": {
+    "mech": 8
+   },
+   "row_hash": "0xc173eafde449c789"
+  },
+  {
+   "kind": "foundry-drift",
+   "target": "hearts_trick",
+   "crowns": 11,
+   "families": 4,
+   "familyMix": {
+    "for_scan": 3,
+    "sort_stable": 3,
+    "filter_max": 2,
+    "fold_reduce": 3
+   },
+   "firstEntry": {
+    "for_scan": 1,
+    "sort_stable": 2,
+    "filter_max": 9,
+    "fold_reduce": 17
+   },
+   "entropyEarly": 1.561,
+   "entropyLate": 0,
+   "drift": -1.561,
+   "voices": {
+    "mech": 11
+   },
+   "row_hash": "0x6e8c44dc560122a3"
+  },
+  {
+   "kind": "foundry-drift",
+   "target": "holdem_cat",
+   "crowns": 6,
+   "families": 3,
+   "familyMix": {
+    "run_pattern": 2,
+    "bitset": 2,
+    "bucket_chain": 2
+   },
+   "firstEntry": {
+    "run_pattern": 1,
+    "bitset": 4,
+    "bucket_chain": 9
+   },
+   "entropyEarly": 1.585,
+   "entropyLate": 0,
+   "drift": -1.585,
+   "voices": {
+    "mech": 6
+   },
+   "row_hash": "0xa98396c05a6c5e2e"
+  },
+  {
+   "kind": "foundry-drift",
+   "target": "pager_band",
+   "crowns": 3,
+   "families": 3,
+   "familyMix": {
+    "boolean_index": 1,
+    "rules_table": 1,
+    "ladder": 1
+   },
+   "firstEntry": {
+    "boolean_index": 1,
+    "rules_table": 8,
+    "ladder": 2
+   },
+   "entropyEarly": 1.585,
+   "entropyLate": 0,
+   "drift": -1.585,
+   "voices": {
+    "mech": 3
+   },
+   "row_hash": "0x732cce051d0e7337"
+  },
+  {
+   "kind": "foundry-drift",
+   "target": "witness_fnv",
+   "crowns": 4,
+   "families": 3,
+   "familyMix": {
+    "bigint_fold": 2,
+    "hilo32": 1,
+    "word_pairs": 1
+   },
+   "firstEntry": {
+    "bigint_fold": 1,
+    "hilo32": 13,
+    "word_pairs": 9
+   },
+   "entropyEarly": 0.918,
+   "entropyLate": 0,
+   "drift": -0.918,
+   "voices": {
+    "mech": 4
+   },
+   "row_hash": "0x2c29d0e31d1f81f9"
+  },
+  {
+   "kind": "foundry-drift",
+   "target": "cosine_sparse",
+   "crowns": 3,
+   "families": 3,
+   "familyMix": {
+    "sorted_two_pointer": 1,
+    "a_key_scan": 1,
+    "union_set": 1
+   },
+   "firstEntry": {
+    "sorted_two_pointer": 1,
+    "a_key_scan": 5,
+    "union_set": 4
+   },
+   "entropyEarly": 1.585,
+   "entropyLate": 0,
+   "drift": -1.585,
+   "voices": {
+    "mech": 3
+   },
+   "row_hash": "0x077683370af33748"
+  },
+  {
+   "kind": "foundry-drift",
+   "target": "hand_eval5",
+   "crowns": 3,
+   "families": 3,
+   "familyMix": {
+    "bit_count_scan": 1,
+    "count_entries": 1,
+    "sorted_runs": 1
+   },
+   "firstEntry": {
+    "bit_count_scan": 1,
+    "count_entries": 5,
+    "sorted_runs": 2
+   },
+   "entropyEarly": 1.585,
+   "entropyLate": 0,
+   "drift": -1.585,
+   "voices": {
+    "mech": 3
+   },
+   "row_hash": "0x49603be58e811e3c"
+  },
+  {
+   "kind": "foundry-drift",
+   "target": "gate_law",
+   "crowns": 3,
+   "families": 3,
+   "familyMix": {
+    "math_max_ternary": 1,
+    "sorted_index": 1,
+    "reduce_carrier": 1
+   },
+   "firstEntry": {
+    "math_max_ternary": 1,
+    "sorted_index": 4,
+    "reduce_carrier": 2
+   },
+   "entropyEarly": 1.585,
+   "entropyLate": 0,
+   "drift": -1.585,
+   "voices": {
+    "mech": 3
+   },
+   "row_hash": "0x9418d3ff9722ec63"
+  },
+  {
+   "kind": "bazaar-edge",
+   "from": "A",
+   "to": "B",
+   "family": "bigint_fold",
+   "attempts": 2,
+   "woven": 2,
+   "hashes": [
+    "aa28e37705",
+    "1a40c09143"
+   ],
+   "wovenRate": 1,
+   "row_hash": "0x264eb40a9da0736d"
+  },
+  {
+   "kind": "bazaar-edge",
+   "from": "A",
+   "to": "B",
+   "family": "word_pairs",
+   "attempts": 1,
+   "woven": 0,
+   "hashes": [
+    "9a04940bda"
+   ],
+   "wovenRate": 0,
+   "row_hash": "0x11d95ed2a35d5e65"
+  },
+  {
+   "kind": "bazaar-edge",
+   "from": "B",
+   "to": "A",
+   "family": "word_pairs",
+   "attempts": 1,
+   "woven": 0,
+   "hashes": [
+    "9a04940bda"
+   ],
+   "wovenRate": 0,
+   "row_hash": "0x46984135f9c9f4a6"
+  },
+  {
+   "kind": "bazaar-edge",
+   "from": "B",
+   "to": "A",
+   "family": "hilo32",
+   "attempts": 1,
+   "woven": 1,
+   "hashes": [
+    "3d237a99ef"
+   ],
+   "wovenRate": 1,
+   "row_hash": "0x796cc7097d3f83eb"
+  },
+  {
+   "kind": "bazaar-edge",
+   "from": "B",
+   "to": "A",
+   "family": "traded:bigint_fold",
+   "attempts": 2,
+   "woven": 0,
+   "hashes": [
+    "trade-aa28e37705",
+    "trade-1a40c09143"
+   ],
+   "wovenRate": 0,
+   "row_hash": "0xc6bf0a35faf48360"
+  },
+  {
+   "kind": "doctrine-adoption",
+   "house": "B",
+   "family": "bigint_fold",
+   "from": "A",
+   "adopted": false,
+   "note": "traded family woven but not (yet) doctrine",
+   "row_hash": "0xad058c7b7907ac90"
+  },
+  {
+   "kind": "doctrine-adoption",
+   "house": "A",
+   "family": "hilo32",
+   "from": "B",
+   "adopted": false,
+   "note": "traded family woven but not (yet) doctrine",
+   "row_hash": "0xf1b65e00d8354ee6"
+  },
+  {
+   "kind": "drift-verdict",
+   "foundryTargets": 10,
+   "driftTargets": 5,
+   "entropyWidening": 0,
+   "entropyNarrowing": 5,
+   "tradeEdges": 5,
+   "wovenTotal": 3,
+   "caughtTotal": 4,
+   "adoptionChecked": 2,
+   "adoptionYes": 0,
+   "verdict": "foundry entropy NARROWS (early crowns dominate) | bazaar: 5 trade edges, woven rate 0.429",
+   "row_hash": "0x71d5c4acdfdb80c1"
+  }
+ ]
+}

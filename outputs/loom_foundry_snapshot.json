@@ -1,0 +1,4096 @@
+{
+ "run": "divergence-foundry offline",
+ "date": "2026-09-25T21:19:28.036Z",
+ "targets": 10,
+ "gens": 24,
+ "candidates": 1920,
+ "elapsed_ms": 4064,
+ "reports": [
+  {
+   "target": "mines_safe",
+   "title": "Minesweeper — certainly-safe cells",
+   "gens": 24,
+   "archive": [
+    {
+     "family": "mask_scan",
+     "hash": "5a79f23c21",
+     "novelty": 1,
+     "behav": 1,
+     "struct": 1,
+     "voice": "mech",
+     "gen": 1,
+     "corruption": 0.3,
+     "src_bytes": 1221
+    },
+    {
+     "family": "backtrack",
+     "hash": "f37a1f9910",
+     "novelty": 0.83082,
+     "behav": 1,
+     "struct": 0.51663,
+     "voice": "mech",
+     "gen": 7,
+     "corruption": 0.15,
+     "src_bytes": 1751
+    },
+    {
+     "family": "mask_scan",
+     "hash": "c8e427b3bf",
+     "novelty": 0.73347,
+     "behav": 1,
+     "struct": 0.23849,
+     "voice": "mech",
+     "gen": 1,
+     "corruption": 0.3,
+     "src_bytes": 1165
+    }
+   ],
+   "elites_src": [
+    {
+     "family": "mask_scan",
+     "hash": "5a79f23c21",
+     "src": "function solve(input) {\n  const g = input.grid, R = g.length, C = g[0].length;\n  const unk = [];\n  for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) if (g[r][c] === -1) unk.push([r, c]);\n  const n = unk.length, uIdx = {};\n  unk.forEach((u, i) => { uIdx[u[0] * 100 + u[1]] = i; });\n  const cons = [];\n  for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) if (g[r][c] >= 0) {\n    const us = [];\n    for (const [dr, dc] of [[1,1],[1,-1],[-1,-1],[-1,0],[-1,1],[0,1],[0,-1],[1,0]]) {\n      const nr = r + dr, nc = c + dc;\n      if (nr < 0 || nc < 0 || nr >= R || nc >= C || g[nr][nc] !== -1) continue;\n      us.push(uIdx[nr * 100 + nc]);\n    }\n    cons.push([g[r][c], us]);\n  }\n  const mined = new Array(n).fill(false);\n  for (let mask = 0; mask < (1 << n); mask++) {\n    const m2 = (1 << n) - 1 - mask;\n    let ok = true;\n    for (let i = 0; i < cons.length && ok; i++) {\n      let have = 0;\n      for (const ui of cons[i][1]) if ((m2 >> ui) & 1) have++;\n      if (have !== cons[i][0]) ok = false;\n    }\n    if (ok) for (let k = 0; k < n; k++) if ((m2 >> k) & 1) mined[k] = true;\n  }\n  const out = [];\n  for (let k = 0; k < n; k++) if (!mined[k]) out.push(unk[k][0] + \",\" + unk[k][1]);\n  out.sort();\n  return out;\n}"
+    },
+    {
+     "family": "backtrack",
+     "hash": "f37a1f9910",
+     "src": "function solve(input) {\n  const g = input.grid, R = g.length, C = g[0].length;\n  const unk = [];\n  for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) if (g[r][c] === -1) unk.push([r, c]);\n  const seq = unk;\n  const cons = [];\n  for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) if (g[r][c] >= 0) {\n    const us = [];\n    for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {\n      if (!dr && !dc) continue;\n      const nr = r + dr, nc = c + dc;\n      if (nr < 0 || nc < 0 || nr >= R || nc >= C || g[nr][nc] !== -1) continue;\n      us.push(unk.findIndex(u => u[0] === nr && u[1] === nc));\n    }\n    cons.push([g[r][c], us]);\n  }\n  const order2 = seq, n = order2.length;\n  const assign = new Array(n).fill(0);\n  const mined = new Array(n).fill(false);\n  const DIRS = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];\n  function consistentUpTo(depth) {\n    if (true) return true;\n    for (const [need, us] of cons) {\n      let assigned = 0, have = 0;\n      for (const ui of us) { if (us.length && ui < depth) { assigned++; have += assign[ui]; } }\n      if (assigned === us.length && have !== need) return false;\n    }\n    return true;\n  }\n  function walk(depth) {\n    if (depth === n) {\n      for (const [need, us] of cons) {\n        let have = 0;\n        for (const ui of us) have += assign[ui];\n        if (have !== need) return;\n      }\n      for (let k = 0; k < n; k++) if (assign[k]) mined[k] = true;\n      return;\n    }\n    for (const val of [0, 1]) {\n      assign[depth] = val;\n      if (consistentUpTo(depth + 1)) walk(depth + 1);\n      assign[depth] = 0;\n    }\n  }\n  walk(0);\n  const out = [];\n  for (let k = 0; k < n; k++) if (!mined[k]) out.push(order2[k][0] + \",\" + order2[k][1]);\n  out.sort();\n  return out;\n}"
+    },
+    {
+     "family": "mask_scan",
+     "hash": "c8e427b3bf",
+     "src": "function solve(input) {\n  const g = input.grid, R = g.length, C = g[0].length;\n  const unk = [];\n  for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) if (g[r][c] === -1) unk.push([r, c]);\n  const n = unk.length, uIdx = {};\n  unk.forEach((u, i) => { uIdx[u[0] * 100 + u[1]] = i; });\n  const cons = [];\n  for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) if (g[r][c] >= 0) {\n    const us = [];\n    for (const [dr, dc] of [[0,1],[0,-1],[-1,-1],[1,0],[1,1],[-1,1],[-1,0],[1,-1]]) {\n      const nr = r + dr, nc = c + dc;\n      if (nr < 0 || nc < 0 || nr >= R || nc >= C || g[nr][nc] !== -1) continue;\n      us.push(uIdx[nr * 100 + nc]);\n    }\n    cons.push([g[r][c], us]);\n  }\n  let everMined = 0;\n  for (let mask = 0; mask < (1 << n); mask++) {\n    const m2 = (1 << n) - 1 - mask;\n    let ok = true;\n    for (let i = 0; i < cons.length && ok; i++) {\n      let have = 0;\n      for (const ui of cons[i][1]) if ((m2 >> ui) & 1) have++;\n      if (have !== cons[i][0]) ok = false;\n    }\n    if (ok) everMined |= m2;\n  }\n  const out = [];\n  for (let k = 0; k < n; k++) if (!(everMined >> k & 1)) out.push(unk[k][0] + \",\" + unk[k][1]);\n  out.sort();\n  return out;\n}"
+    }
+   ],
+   "record": 1,
+   "diversity": 0.42817,
+   "stats": {
+    "caught": 80,
+    "mimic": 109,
+    "divergent": 0,
+    "alien": 3,
+    "crowned": 3,
+    "systwo": 0,
+    "sheet_host_disagree": 0
+   },
+   "forge": {
+    "probes": 40,
+    "scarred": 0,
+    "budget": 40,
+    "rounds": 24,
+    "kinds": {
+     "base": 7,
+     "random": 10,
+     "boundary": 7,
+     "quantum-mock": 8,
+     "rare": 6,
+     "trickle": 2
+    }
+   },
+   "chain_ok": true,
+   "chain_links": 216,
+   "curve": [
+    {
+     "gen": 1,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 33,
+     "budget": 24,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.23849,
+     "axis": "auto",
+     "crowned": true
+    },
+    {
+     "gen": 2,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 24,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.23849,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 3,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 24,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.23849,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 4,
+     "fakes": 8,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 30,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.23849,
+     "axis": "dial",
+     "crowned": false
+    },
+    {
+     "gen": 5,
+     "fakes": 8,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.23849,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 6,
+     "fakes": 8,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.23849,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 7,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.42817,
+     "axis": "speciate",
+     "crowned": true
+    },
+    {
+     "gen": 8,
+     "fakes": 8,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.42817,
+     "axis": "dial",
+     "crowned": false
+    },
+    {
+     "gen": 9,
+     "fakes": 8,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.42817,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 10,
+     "fakes": 8,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.42817,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 11,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.42817,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 12,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.42817,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 13,
+     "fakes": 8,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.42817,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 14,
+     "fakes": 8,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.42817,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 15,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.42817,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 16,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.42817,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 17,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.42817,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 18,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.42817,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 19,
+     "fakes": 8,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.42817,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 20,
+     "fakes": 8,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.42817,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 21,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.42817,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 22,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.42817,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 23,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.42817,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 24,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.42817,
+     "axis": "speciate",
+     "crowned": false
+    }
+   ],
+   "elapsed_ms": 1264
+  },
+  {
+   "target": "reversi_flips",
+   "title": "Reversi — flipped cells",
+   "gens": 24,
+   "archive": [
+    {
+     "family": "ray_loop",
+     "hash": "56c863e30a",
+     "novelty": 1,
+     "behav": 1,
+     "struct": 1,
+     "voice": "mech",
+     "gen": 1,
+     "corruption": 0.3,
+     "src_bytes": 628
+    },
+    {
+     "family": "rec_ray",
+     "hash": "b2f653204e",
+     "novelty": 0.83783,
+     "behav": 1,
+     "struct": 0.53665,
+     "voice": "mech",
+     "gen": 10,
+     "corruption": 0.15,
+     "src_bytes": 654
+    },
+    {
+     "family": "flat_index",
+     "hash": "ba37556a50",
+     "novelty": 0.83357,
+     "behav": 1,
+     "struct": 0.5245,
+     "voice": "mech",
+     "gen": 3,
+     "corruption": 0.3,
+     "src_bytes": 700
+    },
+    {
+     "family": "fold_dirs",
+     "hash": "a78f3eb2b2",
+     "novelty": 0.81675,
+     "behav": 1,
+     "struct": 0.47642,
+     "voice": "mech",
+     "gen": 13,
+     "corruption": 0.3,
+     "src_bytes": 609
+    },
+    {
+     "family": "flat_index",
+     "hash": "84bace7a60",
+     "novelty": 0.81038,
+     "behav": 1,
+     "struct": 0.45824,
+     "voice": "mech",
+     "gen": 3,
+     "corruption": 0.3,
+     "src_bytes": 794
+    },
+    {
+     "family": "fold_dirs",
+     "hash": "9e314b11f9",
+     "novelty": 0.73264,
+     "behav": 1,
+     "struct": 0.2361,
+     "voice": "mech",
+     "gen": 13,
+     "corruption": 0.3,
+     "src_bytes": 640
+    },
+    {
+     "family": "fold_dirs",
+     "hash": "3213222979",
+     "novelty": 0.69935,
+     "behav": 1,
+     "struct": 0.141,
+     "voice": "mech",
+     "gen": 13,
+     "corruption": 0.3,
+     "src_bytes": 618
+    }
+   ],
+   "elites_src": [
+    {
+     "family": "ray_loop",
+     "hash": "56c863e30a",
+     "src": "function solve(input) {\n  const g = input.grid, opp = input.player === 1 ? 2 : 1;\n  const flips = new Set();\n  const DIRS = [[-1,1],[1,0],[0,-1],[0,1],[-1,-1],[1,1],[1,-1],[-1,0]];\n  for (const [dr, dc] of DIRS) {\n    const run = [];\n    let r = input.r + dr, c = input.c + dc;\n    while (r >= 0 && c >= 0 && r < g.length && c < g[0].length && g[r][c] === opp) {\n      run.push([r, c]); r += dr; c += dc;\n    }\n    if (run.length && r >= 0 && c >= 0 && r < g.length && c < g[0].length && g[r][c] === input.player)\n      run.forEach(([fr, fc]) => flips.add(fr + \",\" + fc));\n  }\n  const out = [...flips]; out.sort(); return out;\n}"
+    },
+    {
+     "family": "rec_ray",
+     "hash": "b2f653204e",
+     "src": "function solve(input) {\n  const g = input.grid, opp = input.player === 1 ? 2 : 1;\n  const DIRS = [[0,-1],[1,1],[-1,0],[-1,-1],[1,-1],[1,0],[0,1],[-1,1]];\n  const flips = new Set();\n  function ray(r, c, dr, dc, run) {\n    if (r < 0 || c < 0 || r >= g.length || c >= g[0].length) return null;\n    if (g[r][c] === 0) return null;\n    if (g[r][c] === input.player) return run;\n    return ray(r + dr, c + dc, dr, dc, run.concat([[r, c]]));\n  }\n  for (const [dr, dc] of DIRS) {\n    const got = ray(input.r + dr, input.c + dc, dr, dc, []);\n    if (got) got.forEach(([fr, fc]) => flips.add(fr + \",\" + fc));\n  }\n  const out = [...flips]; out.sort(); return out;\n}"
+    },
+    {
+     "family": "flat_index",
+     "hash": "ba37556a50",
+     "src": "function solve(input) {\n  const g = input.grid, W = g[0].length, H = g.length;\n  const flat = g.flat(), opp = input.player === 1 ? 2 : 1;\n  const DIRS = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];\n  const flips = new Set();\n  for (const [dr, dc] of DIRS) {\n    const run = [];\n    let r = input.r + dr, c = input.c + dc;\n    while (r >= 0 && c >= 0 && r < H && c < W && flat[r * W + c] === opp) {\n      run.push(r * W + c); r += dr; c += dc;\n    }\n    if (run.length && r >= 0 && c >= 0 && r < H && c < W && flat[r * W + c] === input.player)\n      run.forEach(i => flips.add(Math.floor(i / W) + \",\" + (i - Math.floor(i / W) * W)));\n  }\n  const out = [...flips]; out.sort(); return out;\n}"
+    },
+    {
+     "family": "fold_dirs",
+     "hash": "a78f3eb2b2",
+     "src": "function solve(input) {\n  const g = input.grid, opp = input.player === 1 ? 2 : 1;\n  const DIRS = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];\n  const runs = DIRS.map(([dr, dc]) => {\n    const run = [];\n    let r = input.r + dr, c = input.c + dc;\n    while (r >= 0 && c >= 0 && r < g.length && c < g[0].length && g[r][c] === opp) { run.push([r, c]); r += dr; c += dc; }\n    return (run.length && r >= 0 && c >= 0 && r < g.length && c < g[0].length && g[r][c] === input.player) ? run : [];\n  });\n  const out = [...new Set(runs.flat().map(([fr, fc]) => fr + \",\" + fc))];\n  out.sort();\n  return out;\n}"
+    },
+    {
+     "family": "flat_index",
+     "hash": "84bace7a60",
+     "src": "function solve(input) {\n  const g = input.grid, W = g[0].length, H = g.length;\n  const flat = g.flat(), opp = input.player === 1 ? 2 : 1;\n  const DIRS = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];\n  const start = input.r * W + input.c;\n  const flips = new Set();\n  DIRS.map(([dr, dc]) => start + dr * W + dc).forEach((_, k) => {\n    const [dr, dc] = DIRS[k];\n    const run = [];\n    let r = input.r + dr, c = input.c + dc;\n    while (r >= 0 && c >= 0 && r < H && c < W && flat[r * W + c] === opp) { run.push(r * W + c); r += dr; c += dc; }\n    if (run.length && r >= 0 && c >= 0 && r < H && c < W && flat[r * W + c] === input.player)\n      run.forEach(i => flips.add(Math.floor(i / W) + \",\" + (i - Math.floor(i / W) * W)));\n  });\n  const out = [...flips]; out.sort(); return out;\n}"
+    },
+    {
+     "family": "fold_dirs",
+     "hash": "9e314b11f9",
+     "src": "function solve(input) {\n  const g = input.grid, opp = input.player === 1 ? 2 : 1;\n  const DIRS = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];\n  const found = DIRS.reduce((acc, [dr, dc]) => {\n    const run = [];\n    let r = input.r + dr, c = input.c + dc;\n    while (r >= 0 && c >= 0 && r < g.length && c < g[0].length && g[r][c] === opp) { run.push([r, c]); r += dr; c += dc; }\n    if (run.length && r >= 0 && c >= 0 && r < g.length && c < g[0].length && g[r][c] === input.player)\n      run.forEach(([fr, fc]) => { acc[fr + \",\" + fc] = 1; });\n    return acc;\n  }, {});\n  const out = Object.keys(found); out.sort(); return out;\n}"
+    },
+    {
+     "family": "fold_dirs",
+     "hash": "3213222979",
+     "src": "function solve(input) {\n  const g = input.grid, opp = input.player === 1 ? 2 : 1;\n  const DIRS = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];\n  const flips = new Set();\n  DIRS.forEach(([dr, dc]) => {\n    const run = [];\n    let r = input.r + dr, c = input.c + dc;\n    while (r >= 0 && c >= 0 && r < g.length && c < g[0].length && g[r][c] === opp) { run.push([r, c]); r += dr; c += dc; }\n    if (run.length && r >= 0 && c >= 0 && r < g.length && c < g[0].length && g[r][c] === input.player)\n      run.forEach(([fr, fc]) => flips.add(fr + \",\" + fc));\n  });\n  const out = [...flips]; out.sort(); return out;\n}"
+    }
+   ],
+   "record": 1,
+   "diversity": 0.47815,
+   "stats": {
+    "caught": 0,
+    "mimic": 185,
+    "divergent": 0,
+    "alien": 7,
+    "crowned": 7,
+    "systwo": 0,
+    "sheet_host_disagree": 0
+   },
+   "forge": {
+    "probes": 64,
+    "scarred": 0,
+    "budget": 64,
+    "rounds": 24,
+    "kinds": {
+     "base": 6,
+     "random": 11,
+     "boundary": 7,
+     "quantum-mock": 20,
+     "rare": 12,
+     "trickle": 8
+    }
+   },
+   "chain_ok": true,
+   "chain_links": 216,
+   "curve": [
+    {
+     "gen": 1,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 33,
+     "budget": 24,
+     "archive": 1,
+     "record": 1,
+     "diversity": 0,
+     "axis": "auto",
+     "crowned": true
+    },
+    {
+     "gen": 2,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 42,
+     "budget": 24,
+     "archive": 1,
+     "record": 1,
+     "diversity": 0,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 3,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 51,
+     "budget": 24,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.51177,
+     "axis": "auto",
+     "crowned": true
+    },
+    {
+     "gen": 4,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 60,
+     "budget": 24,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.51177,
+     "axis": "dial",
+     "crowned": false
+    },
+    {
+     "gen": 5,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 24,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.51177,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 6,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 24,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.51177,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 7,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 27,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.51177,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 8,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 30,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.51177,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 9,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 33,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.51177,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 10,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 37,
+     "archive": 4,
+     "record": 1,
+     "diversity": 0.53368,
+     "axis": "speciate",
+     "crowned": true
+    },
+    {
+     "gen": 11,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 37,
+     "archive": 4,
+     "record": 1,
+     "diversity": 0.53368,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 12,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 37,
+     "archive": 4,
+     "record": 1,
+     "diversity": 0.53368,
+     "axis": "dial",
+     "crowned": false
+    },
+    {
+     "gen": 13,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 37,
+     "archive": 7,
+     "record": 1,
+     "diversity": 0.47815,
+     "axis": "auto",
+     "crowned": true
+    },
+    {
+     "gen": 14,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 37,
+     "archive": 7,
+     "record": 1,
+     "diversity": 0.47815,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 15,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 37,
+     "archive": 7,
+     "record": 1,
+     "diversity": 0.47815,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 16,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 37,
+     "archive": 7,
+     "record": 1,
+     "diversity": 0.47815,
+     "axis": "dial",
+     "crowned": false
+    },
+    {
+     "gen": 17,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 41,
+     "archive": 7,
+     "record": 1,
+     "diversity": 0.47815,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 18,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 46,
+     "archive": 7,
+     "record": 1,
+     "diversity": 0.47815,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 19,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 51,
+     "archive": 7,
+     "record": 1,
+     "diversity": 0.47815,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 20,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 57,
+     "archive": 7,
+     "record": 1,
+     "diversity": 0.47815,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 21,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 63,
+     "archive": 7,
+     "record": 1,
+     "diversity": 0.47815,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 22,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 64,
+     "archive": 7,
+     "record": 1,
+     "diversity": 0.47815,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 23,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 64,
+     "archive": 7,
+     "record": 1,
+     "diversity": 0.47815,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 24,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 64,
+     "archive": 7,
+     "record": 1,
+     "diversity": 0.47815,
+     "axis": "speciate",
+     "crowned": false
+    }
+   ],
+   "elapsed_ms": 1652
+  },
+  {
+   "target": "life_step",
+   "title": "Conway life — one step, dead borders",
+   "gens": 24,
+   "archive": [
+    {
+     "family": "transposed",
+     "hash": "0f8ad14484",
+     "novelty": 1,
+     "behav": 1,
+     "struct": 1,
+     "voice": "mech",
+     "gen": 1,
+     "corruption": 0.3,
+     "src_bytes": 645
+    },
+    {
+     "family": "offset_fold",
+     "hash": "f63884929c",
+     "novelty": 0.85604,
+     "behav": 1,
+     "struct": 0.58869,
+     "voice": "mech",
+     "gen": 2,
+     "corruption": 0.3,
+     "src_bytes": 604
+    },
+    {
+     "family": "transposed",
+     "hash": "5976bcd062",
+     "novelty": 0.8502,
+     "behav": 1,
+     "struct": 0.57199,
+     "voice": "mech",
+     "gen": 1,
+     "corruption": 0.3,
+     "src_bytes": 520
+    },
+    {
+     "family": "flat_kernel",
+     "hash": "0aab3e36f6",
+     "novelty": 0.8285,
+     "behav": 1,
+     "struct": 0.51001,
+     "voice": "mech",
+     "gen": 10,
+     "corruption": 0.15,
+     "src_bytes": 666
+    },
+    {
+     "family": "nested_scan",
+     "hash": "e6b173ff2f",
+     "novelty": 0.80772,
+     "behav": 1,
+     "struct": 0.45062,
+     "voice": "mech",
+     "gen": 4,
+     "corruption": 0.1,
+     "src_bytes": 576
+    },
+    {
+     "family": "offset_fold",
+     "hash": "6d5e36869e",
+     "novelty": 0.76801,
+     "behav": 1,
+     "struct": 0.33717,
+     "voice": "mech",
+     "gen": 2,
+     "corruption": 0.3,
+     "src_bytes": 597
+    },
+    {
+     "family": "offset_fold",
+     "hash": "6dc68ea141",
+     "novelty": 0.74719,
+     "behav": 1,
+     "struct": 0.27768,
+     "voice": "mech",
+     "gen": 2,
+     "corruption": 0.3,
+     "src_bytes": 606
+    },
+    {
+     "family": "nested_scan",
+     "hash": "fbd22e6e9e",
+     "novelty": 0.68573,
+     "behav": 1,
+     "struct": 0.10208,
+     "voice": "mech",
+     "gen": 4,
+     "corruption": 0.1,
+     "src_bytes": 520
+    }
+   ],
+   "elites_src": [
+    {
+     "family": "transposed",
+     "hash": "0f8ad14484",
+     "src": "function solve(input) {\n  const g = input.grid, H = g.length, W = g[0].length;\n  const cols = Array.from({ length: W }, (_, c) => Array.from({ length: H }, (_, r) => g[r][c]));\n  const next = cols.map((col, c) => col.map((_, r) => {\n    let n = 0;\n    for (let k = -1; k <= 1; k++) for (let m = -1; m <= 1; m++) {\n      if (!k && !m) continue;\n      const cc = c + k, rr = r + m;\n      if (cc < 0 || rr < 0 || cc >= W || rr >= H) continue;\n      n += cols[cc][rr];\n    }\n    return g[r][c] ? (n === 2 || n === 3 ? 1 : 0) : (n === 3 ? 1 : 0);\n  }));\n  return Array.from({ length: H }, (_, r) => Array.from({ length: W }, (_, c) => next[c][r]));\n}"
+    },
+    {
+     "family": "offset_fold",
+     "hash": "f63884929c",
+     "src": "function solve(input) {\n  const g = input.grid, H = g.length, W = g[0].length;\n  const DIRS = [[-1,0],[1,1],[0,1],[-1,1],[-1,-1],[0,-1],[1,-1],[1,0]];\n  const out = [];\n  for (let r = 0; r < H; r++) {\n    const row = [];\n    for (let c = 0; c < W; c++) {\n      const n = DIRS.reduce((s, [dr, dc]) => {\n        const nr = r + dr, nc = c + dc;\n        return s + (nr >= 0 && nc >= 0 && nr < H && nc < W ? g[nr][nc] : 0);\n      }, 0);\n      const alive = g[r][c];\n      const next = alive ? (n === 2 || n === 3 ? 1 : 0) : (n === 3 ? 1 : 0);\n      row.push(next);\n    }\n    out.push(row);\n  }\n  return out;\n}"
+    },
+    {
+     "family": "transposed",
+     "hash": "5976bcd062",
+     "src": "function solve(input) {\n  const g = input.grid, H = g.length, W = g[0].length;\n  const out = g.map(row => row.slice());\n  for (let c = 0; c < W; c++) for (let r = 0; r < H; r++) {\n    let n = 0;\n    for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {\n      if (!dr && !dc) continue;\n      const nr = r + dr, nc = c + dc;\n      if (nr < 0 || nc < 0 || nr >= H || nc >= W) continue;\n      n += g[nr][nc];\n    }\n    out[r][c] = g[r][c] ? (n === 2 || n === 3 ? 1 : 0) : (n === 3 ? 1 : 0);\n  }\n  return out;\n}"
+    },
+    {
+     "family": "flat_kernel",
+     "hash": "0aab3e36f6",
+     "src": "function solve(input) {\n  const g = input.grid, H = g.length, W = g[0].length;\n  const flat = g.flat();\n  const KER = [1,1,1,1,1,1,1,1];\n  const DIRS = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];\n  const out = [];\n  for (let i = 0; i < H * W; i++) {\n    const r = Math.floor(i / W), c = i % W;\n    let n = 0;\n    DIRS.forEach(([dr, dc], k) => {\n      const nr = r + dr, nc = c + dc;\n      if (nr >= 0 && nc >= 0 && nr < H && nc < W) n += flat[nr * W + nc] * KER[k];\n    });\n    const alive = flat[i];\n    out.push(alive ? (n === 2 || n === 3 ? 1 : 0) : (n === 3 ? 1 : 0));\n  }\n  return Array.from({ length: H }, (_, r) => out.slice(r * W, r * W + W));\n}"
+    },
+    {
+     "family": "nested_scan",
+     "hash": "e6b173ff2f",
+     "src": "function solve(input) {\n  const g = input.grid, H = g.length, W = g[0].length;\n  const out = g.map(row => row.slice());\n  for (let r = 0; r < H; r++) for (let c = 0; c < W; c++) {\n    const n =\n      (r > 0 && c > 0 ? g[r-1][c-1] : 0) + (r > 0 ? g[r-1][c] : 0) +\n      (r > 0 && c < W-1 ? g[r-1][c+1] : 0) + (c > 0 ? g[r][c-1] : 0) +\n      (c < W-1 ? g[r][c+1] : 0) + (r < H-1 && c > 0 ? g[r+1][c-1] : 0) +\n      (r < H-1 ? g[r+1][c] : 0) + (r < H-1 && c < W-1 ? g[r+1][c+1] : 0);\n    out[r][c] = g[r][c] ? (n === 2 || n === 3 ? 1 : 0) : (n === 3 ? 1 : 0);\n  }\n  return out;\n}"
+    },
+    {
+     "family": "offset_fold",
+     "hash": "6d5e36869e",
+     "src": "function solve(input) {\n  const g = input.grid, H = g.length, W = g[0].length;\n  const DIRS = [[-1,1],[1,-1],[1,0],[1,1],[-1,0],[0,1],[0,-1],[-1,-1]];\n  const out = [];\n  for (let r = 0; r < H; r++) {\n    const row = [];\n    for (let c = 0; c < W; c++) {\n      let n = 0;\n      for (const [dr, dc] of DIRS) {\n        const nr = r + dr, nc = c + dc;\n        if (nr >= 0 && nc >= 0 && nr < H && nc < W) n += g[nr][nc];\n      }\n      const alive = g[r][c];\n      const next = alive ? (n === 2 || n === 3 ? 1 : 0) : (n === 3 ? 1 : 0);\n      row.push(next);\n    }\n    out.push(row);\n  }\n  return out;\n}"
+    },
+    {
+     "family": "offset_fold",
+     "hash": "6dc68ea141",
+     "src": "function solve(input) {\n  const g = input.grid, H = g.length, W = g[0].length;\n  const DIRS = [[1,1],[0,1],[1,0],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1]];\n  const out = [];\n  for (let r = 0; r < H; r++) {\n    const row = [];\n    for (let c = 0; c < W; c++) {\n      const n = DIRS.map(([dr, dc]) => [r + dr, c + dc])\n        .filter(([nr, nc]) => nr >= 0 && nc >= 0 && nr < H && nc < W)\n        .reduce((s, [nr, nc]) => s + g[nr][nc], 0);\n      const alive = g[r][c];\n      const next = alive ? (n === 2 || n === 3 ? 1 : 0) : (n === 3 ? 1 : 0);\n      row.push(next);\n    }\n    out.push(row);\n  }\n  return out;\n}"
+    },
+    {
+     "family": "nested_scan",
+     "hash": "fbd22e6e9e",
+     "src": "function solve(input) {\n  const g = input.grid, H = g.length, W = g[0].length;\n  const out = g.map(row => row.slice());\n  for (let r = 0; r < H; r++) for (let c = 0; c < W; c++) {\n    let n = 0;\n    for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {\n      if (!dr && !dc) continue;\n      const nr = r + dr, nc = c + dc;\n      if (nr < 0 || nc < 0 || nr >= H || nc >= W) continue;\n      n += g[nr][nc];\n    }\n    out[r][c] = g[r][c] ? (n === 2 || n === 3 ? 1 : 0) : (n === 3 ? 1 : 0);\n  }\n  return out;\n}"
+    }
+   ],
+   "record": 1,
+   "diversity": 0.51997,
+   "stats": {
+    "caught": 0,
+    "mimic": 184,
+    "divergent": 0,
+    "alien": 8,
+    "crowned": 8,
+    "systwo": 0,
+    "sheet_host_disagree": 192
+   },
+   "forge": {
+    "probes": 64,
+    "scarred": 0,
+    "budget": 64,
+    "rounds": 24,
+    "kinds": {
+     "base": 7,
+     "random": 10,
+     "boundary": 7,
+     "quantum-mock": 20,
+     "rare": 12,
+     "trickle": 8
+    }
+   },
+   "chain_ok": true,
+   "chain_links": 216,
+   "curve": [
+    {
+     "gen": 1,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 33,
+     "budget": 24,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.57199,
+     "axis": "auto",
+     "crowned": true
+    },
+    {
+     "gen": 2,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 42,
+     "budget": 24,
+     "archive": 5,
+     "record": 1,
+     "diversity": 0.50399,
+     "axis": "auto",
+     "crowned": true
+    },
+    {
+     "gen": 3,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 51,
+     "budget": 24,
+     "archive": 5,
+     "record": 1,
+     "diversity": 0.50399,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 4,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 60,
+     "budget": 24,
+     "archive": 7,
+     "record": 1,
+     "diversity": 0.50465,
+     "axis": "dial",
+     "crowned": true
+    },
+    {
+     "gen": 5,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 24,
+     "archive": 7,
+     "record": 1,
+     "diversity": 0.50465,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 6,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 24,
+     "archive": 7,
+     "record": 1,
+     "diversity": 0.50465,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 7,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 24,
+     "archive": 7,
+     "record": 1,
+     "diversity": 0.50465,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 8,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 27,
+     "archive": 7,
+     "record": 1,
+     "diversity": 0.50465,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 9,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 30,
+     "archive": 7,
+     "record": 1,
+     "diversity": 0.50465,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 10,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 33,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51997,
+     "axis": "speciate",
+     "crowned": true
+    },
+    {
+     "gen": 11,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 33,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51997,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 12,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 33,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51997,
+     "axis": "dial",
+     "crowned": false
+    },
+    {
+     "gen": 13,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 33,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51997,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 14,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 37,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51997,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 15,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 41,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51997,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 16,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 46,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51997,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 17,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 51,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51997,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 18,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 57,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51997,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 19,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 63,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51997,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 20,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 64,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51997,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 21,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 64,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51997,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 22,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 64,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51997,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 23,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 64,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51997,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 24,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 64,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51997,
+     "axis": "speciate",
+     "crowned": false
+    }
+   ],
+   "elapsed_ms": 2114
+  },
+  {
+   "target": "hearts_trick",
+   "title": "Hearts — trick winner",
+   "gens": 24,
+   "archive": [
+    {
+     "family": "for_scan",
+     "hash": "eb26ed6a4a",
+     "novelty": 1,
+     "behav": 1,
+     "struct": 1,
+     "voice": "mech",
+     "gen": 1,
+     "corruption": 0.3,
+     "src_bytes": 228
+    },
+    {
+     "family": "sort_stable",
+     "hash": "860a9a33e9",
+     "novelty": 0.85928,
+     "behav": 1,
+     "struct": 0.59793,
+     "voice": "mech",
+     "gen": 2,
+     "corruption": 0.3,
+     "src_bytes": 288
+    },
+    {
+     "family": "filter_max",
+     "hash": "09e67da624",
+     "novelty": 0.835,
+     "behav": 1,
+     "struct": 0.52858,
+     "voice": "mech",
+     "gen": 9,
+     "corruption": 0.15,
+     "src_bytes": 272
+    },
+    {
+     "family": "fold_reduce",
+     "hash": "e0a6fdce56",
+     "novelty": 0.82767,
+     "behav": 1,
+     "struct": 0.50764,
+     "voice": "mech",
+     "gen": 17,
+     "corruption": 0.15,
+     "src_bytes": 212
+    },
+    {
+     "family": "fold_reduce",
+     "hash": "a21313ea71",
+     "novelty": 0.81021,
+     "behav": 1,
+     "struct": 0.45773,
+     "voice": "mech",
+     "gen": 17,
+     "corruption": 0.15,
+     "src_bytes": 255
+    },
+    {
+     "family": "sort_stable",
+     "hash": "67d08c7461",
+     "novelty": 0.80218,
+     "behav": 1,
+     "struct": 0.43479,
+     "voice": "mech",
+     "gen": 2,
+     "corruption": 0.3,
+     "src_bytes": 248
+    },
+    {
+     "family": "fold_reduce",
+     "hash": "9ddc24e7cc",
+     "novelty": 0.79164,
+     "behav": 1,
+     "struct": 0.40469,
+     "voice": "mech",
+     "gen": 17,
+     "corruption": 0.15,
+     "src_bytes": 279
+    },
+    {
+     "family": "filter_max",
+     "hash": "f49a45c6a2",
+     "novelty": 0.75891,
+     "behav": 1,
+     "struct": 0.31117,
+     "voice": "mech",
+     "gen": 9,
+     "corruption": 0.15,
+     "src_bytes": 316
+    },
+    {
+     "family": "sort_stable",
+     "hash": "25051d6b0b",
+     "novelty": 0.74745,
+     "behav": 1,
+     "struct": 0.27844,
+     "voice": "mech",
+     "gen": 2,
+     "corruption": 0.3,
+     "src_bytes": 249
+    },
+    {
+     "family": "for_scan",
+     "hash": "5a17655b24",
+     "novelty": 0.73572,
+     "behav": 1,
+     "struct": 0.2449,
+     "voice": "mech",
+     "gen": 1,
+     "corruption": 0.3,
+     "src_bytes": 234
+    },
+    {
+     "family": "for_scan",
+     "hash": "6bdfde233b",
+     "novelty": 0.72363,
+     "behav": 1,
+     "struct": 0.21037,
+     "voice": "mech",
+     "gen": 1,
+     "corruption": 0.3,
+     "src_bytes": 230
+    }
+   ],
+   "elites_src": [
+    {
+     "family": "for_scan",
+     "hash": "eb26ed6a4a",
+     "src": "function solve(input) {\n  const plays = input.plays;\n  const lead = plays[0].s;\n  let best = 0;\n  for (let i = 1; i < plays.length; i++) {\n    if (plays[i].s === lead && plays[i].r > plays[best].r) best = i;\n  }\n  return best;\n}"
+    },
+    {
+     "family": "sort_stable",
+     "hash": "860a9a33e9",
+     "src": "function solve(input) {\n  const plays = input.plays;\n  const lead = plays[0].s;\n  const leadCards = plays.map((p, i) => [p, i]).filter(([p]) => p.s === lead);\n  if (!leadCards.length) return 0;\n  const byRank = [...leadCards].sort((a, b) => b[0].r - a[0].r);\n  return byRank.shift()[1];\n}"
+    },
+    {
+     "family": "filter_max",
+     "hash": "09e67da624",
+     "src": "function solve(input) {\n  const plays = input.plays;\n  const lead = plays[0].s;\n  let maxR = -Infinity, best = 0;\n  for (const p of plays) if (p.s === lead && p.r > maxR) { maxR = p.r; best = plays.indexOf(p); }\n  return plays[best] && plays[best].s === lead ? best : 0;\n}"
+    },
+    {
+     "family": "fold_reduce",
+     "hash": "e0a6fdce56",
+     "src": "function solve(input) {\n  const plays = input.plays;\n  const lead = plays[0].s;\n  const best = plays.reduce((acc, p, i) =>\n    (p.s === lead && (acc === -1 || p.r > plays[acc].r)) ? i : acc, -1);\n  return best;\n}"
+    },
+    {
+     "family": "fold_reduce",
+     "hash": "a21313ea71",
+     "src": "function solve(input) {\n  const plays = input.plays;\n  const lead = plays[0].s;\n  const best = plays.reduce((acc, p, i) => {\n    if (p.s !== lead) return acc;\n    return acc === null || p.r > acc.p.r ? { i, p } : acc;\n  }, null)?.i ?? -1;\n  return best;\n}"
+    },
+    {
+     "family": "sort_stable",
+     "hash": "67d08c7461",
+     "src": "function solve(input) {\n  const plays = input.plays;\n  const lead = plays[0].s;\n  const ranked = plays\n    .map((p, i) => ({ p, i }))\n    .filter((e) => e.p.s === lead)\n    .sort((x, y) => y.p.r - x.p.r);\n  return ranked.length ? ranked[0].i : 0;\n}"
+    },
+    {
+     "family": "fold_reduce",
+     "hash": "9ddc24e7cc",
+     "src": "function solve(input) {\n  const plays = input.plays;\n  const lead = plays[0].s;\n  const entries = plays.map((p, i) => ({ p, i }));\n  const best = entries.reduce((acc, e) =>\n    (e.p.s === lead && (acc === null || e.p.r > acc.p.r)) ? e : acc, null);\n  return best ? best.i : -1;\n}"
+    },
+    {
+     "family": "filter_max",
+     "hash": "f49a45c6a2",
+     "src": "function solve(input) {\n  const plays = input.plays;\n  const lead = plays[0].s;\n  const inSuit = plays.map((p, i) => [p, i]).filter(([p]) => p.s === lead);\n  if (!inSuit.length) return 0;\n  const maxR = Math.max(...inSuit.map(([p]) => p.r));\n  const winner = inSuit.find(([p]) => p.r === maxR);\n  return winner[1];\n}"
+    },
+    {
+     "family": "sort_stable",
+     "hash": "25051d6b0b",
+     "src": "function solve(input) {\n  const plays = input.plays;\n  const lead = plays[0].s;\n  const ranked = plays.map((p, i) => [p, i]).filter(([p]) => p.s === lead)\n    .sort((a, b) => b[0].r - a[0].r);\n  if (!ranked.length) return 0;\n  return ranked[0][1];\n}"
+    },
+    {
+     "family": "for_scan",
+     "hash": "5a17655b24",
+     "src": "function solve(input) {\n  const plays = input.plays;\n  const lead = plays[0].s;\n  let best = 0;\n  for (let i = plays.length - 1; i >= 1; i--) {\n    if (plays[i].s === lead && plays[i].r >= plays[best].r) best = i;\n  }\n  return best;\n}"
+    },
+    {
+     "family": "for_scan",
+     "hash": "6bdfde233b",
+     "src": "function solve(input) {\n  const plays = input.plays;\n  const lead = plays[0].s;\n  let best = 0, i = 1;\n  while (i < plays.length) {\n    if (plays[i].s === lead && plays[i].r > plays[best].r) best = i;\n    i++;\n  }\n  return best;\n}"
+    }
+   ],
+   "record": 1,
+   "diversity": 0.52918,
+   "stats": {
+    "caught": 0,
+    "mimic": 181,
+    "divergent": 0,
+    "alien": 11,
+    "crowned": 11,
+    "systwo": 0,
+    "sheet_host_disagree": 0
+   },
+   "forge": {
+    "probes": 64,
+    "scarred": 0,
+    "budget": 64,
+    "rounds": 24,
+    "kinds": {
+     "base": 6,
+     "random": 11,
+     "boundary": 7,
+     "quantum-mock": 20,
+     "rare": 12,
+     "trickle": 8
+    }
+   },
+   "chain_ok": true,
+   "chain_links": 216,
+   "curve": [
+    {
+     "gen": 1,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 33,
+     "budget": 24,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.26603,
+     "axis": "auto",
+     "crowned": true
+    },
+    {
+     "gen": 2,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 42,
+     "budget": 24,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.48858,
+     "axis": "auto",
+     "crowned": true
+    },
+    {
+     "gen": 3,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 51,
+     "budget": 24,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.48858,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 4,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 60,
+     "budget": 24,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.48858,
+     "axis": "dial",
+     "crowned": false
+    },
+    {
+     "gen": 5,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 24,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.48858,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 6,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 27,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.48858,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 7,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 30,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.48858,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 8,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 33,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.48858,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 9,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 37,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51141,
+     "axis": "speciate",
+     "crowned": true
+    },
+    {
+     "gen": 10,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 37,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51141,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 11,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 37,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51141,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 12,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 37,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51141,
+     "axis": "dial",
+     "crowned": false
+    },
+    {
+     "gen": 13,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 41,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51141,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 14,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 46,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51141,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 15,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 51,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51141,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 16,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 57,
+     "archive": 8,
+     "record": 1,
+     "diversity": 0.51141,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 17,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 63,
+     "archive": 11,
+     "record": 1,
+     "diversity": 0.52918,
+     "axis": "speciate",
+     "crowned": true
+    },
+    {
+     "gen": 18,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 63,
+     "archive": 11,
+     "record": 1,
+     "diversity": 0.52918,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 19,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 63,
+     "archive": 11,
+     "record": 1,
+     "diversity": 0.52918,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 20,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 63,
+     "archive": 11,
+     "record": 1,
+     "diversity": 0.52918,
+     "axis": "dial",
+     "crowned": false
+    },
+    {
+     "gen": 21,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 64,
+     "archive": 11,
+     "record": 1,
+     "diversity": 0.52918,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 22,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 64,
+     "archive": 11,
+     "record": 1,
+     "diversity": 0.52918,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 23,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 64,
+     "archive": 11,
+     "record": 1,
+     "diversity": 0.52918,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 24,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 64,
+     "archive": 11,
+     "record": 1,
+     "diversity": 0.52918,
+     "axis": "speciate",
+     "crowned": false
+    }
+   ],
+   "elapsed_ms": 2262
+  },
+  {
+   "target": "holdem_cat",
+   "title": "Hold'em — five-card category",
+   "gens": 24,
+   "archive": [
+    {
+     "family": "run_pattern",
+     "hash": "3a0d83dc03",
+     "novelty": 1,
+     "behav": 1,
+     "struct": 1,
+     "voice": "mech",
+     "gen": 1,
+     "corruption": 0.3,
+     "src_bytes": 892
+    },
+    {
+     "family": "bitset",
+     "hash": "6ff39a7a5a",
+     "novelty": 0.8664,
+     "behav": 1,
+     "struct": 0.61828,
+     "voice": "mech",
+     "gen": 4,
+     "corruption": 0.1,
+     "src_bytes": 841
+    },
+    {
+     "family": "bucket_chain",
+     "hash": "ad6969bddc",
+     "novelty": 0.84901,
+     "behav": 1,
+     "struct": 0.56859,
+     "voice": "mech",
+     "gen": 9,
+     "corruption": 0.15,
+     "src_bytes": 943
+    },
+    {
+     "family": "run_pattern",
+     "hash": "20c00f1a33",
+     "novelty": 0.81313,
+     "behav": 1,
+     "struct": 0.46609,
+     "voice": "mech",
+     "gen": 1,
+     "corruption": 0.3,
+     "src_bytes": 749
+    },
+    {
+     "family": "bitset",
+     "hash": "e74dcfa3c5",
+     "novelty": 0.78169,
+     "behav": 1,
+     "struct": 0.37627,
+     "voice": "mech",
+     "gen": 4,
+     "corruption": 0.1,
+     "src_bytes": 945
+    },
+    {
+     "family": "bucket_chain",
+     "hash": "fe9a16e170",
+     "novelty": 0.72599,
+     "behav": 1,
+     "struct": 0.21712,
+     "voice": "mech",
+     "gen": 9,
+     "corruption": 0.15,
+     "src_bytes": 878
+    }
+   ],
+   "elites_src": [
+    {
+     "family": "run_pattern",
+     "hash": "3a0d83dc03",
+     "src": "function solve(input) {\n  const vals = input.cards.map(c => c[0]).sort((a, b) => a - b);\n  const flush = input.cards.every(c => c[1] === input.cards[0][1]);\n  const runs = [];\n  for (const v of vals) {\n    if (runs.length && runs[runs.length - 1][0] === v) runs[runs.length - 1][1]++;\n    else runs.push([v, 1]);\n  }\n  const shape = runs.map(r => r[1]).sort((a, b) => b - a).join('');\n  let straight = false;\n  if (runs.length === 5) {\n    let consec = true;\n    for (let i = 1; i < 5; i++) if (vals[i] !== vals[0] + i) consec = false;\n    straight = consec;\n    if (!straight && vals.join() === \"2,3,4,5,14\") straight = true;\n  }\n  if (flush && straight) return 8;\n  if (shape === '41') return 7;\n  if (shape === '32') return 6;\n  if (flush) return 5;\n  if (straight) return 4;\n  if (shape === '311') return 3;\n  if (shape === '221') return 2;\n  if (shape === '2111') return 1;\n  return 0;\n}"
+    },
+    {
+     "family": "bitset",
+     "hash": "6ff39a7a5a",
+     "src": "function solve(input) {\n  let mask = 0;\n  const cnt = {};\n  for (const [r] of input.cards) { mask |= (1 << r); cnt[r] = (cnt[r] || 0) + 1; }\n  let flush = true;\n  for (const c of input.cards) if (c[1] !== input.cards[0][1]) flush = false;\n  let straightHigh = 0, run = 0;\n  for (let v = 2; v <= 14; v++) {\n    run = (mask & (1 << v)) ? run + 1 : 0;\n    if (run >= 5) straightHigh = v;\n  }\n  if ((mask & 0x403c) === 0x403c) straightHigh = 5; // wheel A-5\n  let maxC = 0, pairs = 0;\n  for (const k in cnt) {\n    if (cnt[k] > maxC) maxC = cnt[k];\n    if (cnt[k] === 2) pairs++;\n  }\n  if (flush && straightHigh) return 8;\n  if (maxC === 4) return 7;\n  if (maxC === 3 && pairs === 1) return 6;\n  if (flush) return 5;\n  if (straightHigh) return 4;\n  if (maxC === 3) return 3;\n  if (pairs === 2) return 2;\n  if (pairs === 1) return 1;\n  return 0;\n}"
+    },
+    {
+     "family": "bucket_chain",
+     "hash": "ad6969bddc",
+     "src": "function solve(input) {\n  const vals = input.cards.map(c => c[0]).sort((a, b) => a - b);\n  const flush = input.cards.every(c => c[1] === input.cards[0][1]);\n  const distinct = [...new Set(vals)];\n  let straight = 0;\n  if (distinct.length === 5) {\n    if (distinct[4] - distinct[0] === 4) straight = distinct[4];\n    else if (distinct[0] === 2 && distinct[1] === 3 && distinct[2] === 4 && distinct[3] === 5 && distinct[4] === 14) straight = 5;\n  }\n  const cnt = {};\n  vals.forEach(v => { cnt[v] = (cnt[v] || 0) + 1; });\n  const groups = Object.values(cnt).sort((a, b) => b - a);\n  switch (true) {\n    case flush && straight > 0: return 8;\n    case groups[0] === 4: return 7;\n    case groups[0] === 3 && groups[1] === 2: return 6;\n    case flush: return 5;\n    case straight > 0: return 4;\n    case groups[0] === 3: return 3;\n    case groups[0] === 2 && groups[1] === 2: return 2;\n    case groups[0] === 2: return 1;\n    default: return 0;\n  }\n}"
+    },
+    {
+     "family": "run_pattern",
+     "hash": "20c00f1a33",
+     "src": "function solve(input) {\n  const flush = input.cards.every(c => c[1] === input.cards[0][1]);\n  const cnt = new Map();\n  for (const [r] of input.cards) cnt.set(r, (cnt.get(r) || 0) + 1);\n  const shape = [...cnt.values()].sort((a, b) => b - a).join('');\n  const distinct = [...cnt.keys()].sort((a, b) => a - b);\n  let straight = false;\n  if (distinct.length === 5) {\n    straight = distinct[4] - distinct[0] === 4;\n    if (!straight && distinct.join() === \"2,3,4,5,14\") straight = true;\n  }\n  if (flush && straight) return 8;\n  if (shape === '41') return 7;\n  if (shape === '32') return 6;\n  if (flush) return 5;\n  if (straight) return 4;\n  if (shape === '311') return 3;\n  if (shape === '221') return 2;\n  if (shape === '2111') return 1;\n  return 0;\n}"
+    },
+    {
+     "family": "bitset",
+     "hash": "e74dcfa3c5",
+     "src": "function solve(input) {\n  let mask = 0;\n  const cnt = {};\n  for (const [r] of input.cards) { mask |= (1 << r); cnt[r] = (cnt[r] || 0) + 1; }\n  let flush = true;\n  for (const c of input.cards) if (c[1] !== input.cards[0][1]) flush = false;\n  let straightHigh = 0;\n  for (let hi = 6; hi <= 14; hi++) {\n    let all = true;\n    for (let v = hi - 4; v <= hi; v++) if (!(mask & (1 << v))) all = false;\n    if (all) straightHigh = hi;\n  }\n  let wheel = true;\n  for (const v of [14, 2, 3, 4, 5]) if (!(mask & (1 << v))) wheel = false;\n  if (wheel) straightHigh = 5;\n  let maxC = 0, pairs = 0;\n  for (const k in cnt) {\n    if (cnt[k] > maxC) maxC = cnt[k];\n    if (cnt[k] === 2) pairs++;\n  }\n  if (flush && straightHigh) return 8;\n  if (maxC === 4) return 7;\n  if (maxC === 3 && pairs === 1) return 6;\n  if (flush) return 5;\n  if (straightHigh) return 4;\n  if (maxC === 3) return 3;\n  if (pairs === 2) return 2;\n  if (pairs === 1) return 1;\n  return 0;\n}"
+    },
+    {
+     "family": "bucket_chain",
+     "hash": "fe9a16e170",
+     "src": "function solve(input) {\n  const vals = input.cards.map(c => c[0]).sort((a, b) => a - b);\n  const flush = input.cards.every(c => c[1] === input.cards[0][1]);\n  const distinct = [...new Set(vals)];\n  let straight = 0;\n  if (distinct.length === 5) {\n    if (distinct[4] - distinct[0] === 4) straight = distinct[4];\n    else if (distinct[0] === 2 && distinct[1] === 3 && distinct[2] === 4 && distinct[3] === 5 && distinct[4] === 14) straight = 5;\n  }\n  const cnt = {};\n  vals.forEach(v => { cnt[v] = (cnt[v] || 0) + 1; });\n  const groups = Object.values(cnt).sort((a, b) => b - a);\n  if (flush && straight) return 8;\n  if (groups[0] === 4) return 7;\n  if (groups[0] === 3 && groups[1] === 2) return 6;\n  if (flush) return 5;\n  if (straight) return 4;\n  if (groups[0] === 3) return 3;\n  if (groups[0] === 2 && groups[1] === 2) return 2;\n  if (groups[0] === 2) return 1;\n  return 0;\n}"
+    }
+   ],
+   "record": 1,
+   "diversity": 0.54851,
+   "stats": {
+    "caught": 0,
+    "mimic": 186,
+    "divergent": 0,
+    "alien": 6,
+    "crowned": 6,
+    "systwo": 0,
+    "sheet_host_disagree": 0
+   },
+   "forge": {
+    "probes": 64,
+    "scarred": 0,
+    "budget": 64,
+    "rounds": 24,
+    "kinds": {
+     "base": 10,
+     "random": 7,
+     "boundary": 7,
+     "quantum-mock": 20,
+     "rare": 12,
+     "trickle": 8
+    }
+   },
+   "chain_ok": true,
+   "chain_links": 216,
+   "curve": [
+    {
+     "gen": 1,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 33,
+     "budget": 24,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.46609,
+     "axis": "auto",
+     "crowned": true
+    },
+    {
+     "gen": 2,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 42,
+     "budget": 24,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.46609,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 3,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 51,
+     "budget": 24,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.46609,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 4,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 60,
+     "budget": 24,
+     "archive": 4,
+     "record": 1,
+     "diversity": 0.54605,
+     "axis": "dial",
+     "crowned": true
+    },
+    {
+     "gen": 5,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 24,
+     "archive": 4,
+     "record": 1,
+     "diversity": 0.54605,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 6,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 24,
+     "archive": 4,
+     "record": 1,
+     "diversity": 0.54605,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 7,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 24,
+     "archive": 4,
+     "record": 1,
+     "diversity": 0.54605,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 8,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 27,
+     "archive": 4,
+     "record": 1,
+     "diversity": 0.54605,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 9,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 30,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.54851,
+     "axis": "speciate",
+     "crowned": true
+    },
+    {
+     "gen": 10,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 30,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.54851,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 11,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 30,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.54851,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 12,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 30,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.54851,
+     "axis": "dial",
+     "crowned": false
+    },
+    {
+     "gen": 13,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 33,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.54851,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 14,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 37,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.54851,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 15,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 41,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.54851,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 16,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 46,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.54851,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 17,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 51,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.54851,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 18,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 57,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.54851,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 19,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 63,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.54851,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 20,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 64,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.54851,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 21,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 64,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.54851,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 22,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 64,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.54851,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 23,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 64,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.54851,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 24,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 64,
+     "budget": 64,
+     "archive": 6,
+     "record": 1,
+     "diversity": 0.54851,
+     "axis": "speciate",
+     "crowned": false
+    }
+   ],
+   "elapsed_ms": 2634
+  },
+  {
+   "target": "pager_band",
+   "title": "Fleet-pager — hysteresis banding",
+   "gens": 24,
+   "archive": [
+    {
+     "family": "boolean_index",
+     "hash": "6f73333f95",
+     "novelty": 1,
+     "behav": 1,
+     "struct": 1,
+     "voice": "mech",
+     "gen": 1,
+     "corruption": 0.3,
+     "src_bytes": 357
+    },
+    {
+     "family": "rules_table",
+     "hash": "dac5cc639a",
+     "novelty": 0.86615,
+     "behav": 1,
+     "struct": 0.61758,
+     "voice": "mech",
+     "gen": 8,
+     "corruption": 0.15,
+     "src_bytes": 621
+    },
+    {
+     "family": "ladder",
+     "hash": "aa12c6b2da",
+     "novelty": 0.82604,
+     "behav": 1,
+     "struct": 0.50298,
+     "voice": "mech",
+     "gen": 2,
+     "corruption": 0.3,
+     "src_bytes": 400
+    }
+   ],
+   "elites_src": [
+    {
+     "family": "boolean_index",
+     "hash": "6f73333f95",
+     "src": "function solve(input) {\n  const cur = input.cur, prev = input.prev;\n  const band = ['quiet', 'sev3', 'sev2'][(cur >= 40) + (cur >= 70)];\n  const has = !(prev == null);\n  return {\n    band,\n    page_sev2: has && (prev < 70) && (cur >= 70),\n    page_sev3: has && (cur < 70) && (prev < 40) && (cur >= 40),\n    resolve: has && (prev >= 50) && (cur < 50),\n  };\n}"
+    },
+    {
+     "family": "rules_table",
+     "hash": "dac5cc639a",
+     "src": "function solve(input) {\n  const cur = input.cur, prev = input.prev;\n  const rows = [[70, 'sev2'], [40, 'sev3']];\n  let band = 'quiet';\n  for (const row of rows) {\n    if (cur >= row[0]) { band = row[1]; break; }\n  }\n  const has = (prev !== null && prev !== undefined);\n  const flags = [\n    ['page_sev2', [cur >= 70, prev < 70]],\n    ['page_sev3', [cur >= 40, cur < 70, prev < 40]],\n    ['resolve', [cur < 50, prev >= 50]],\n  ];\n  const out = { band, page_sev2: false, page_sev3: false, resolve: false };\n  if (has) {\n    for (const f of flags) {\n      if (f[1].every(Boolean)) out[f[0]] = true;\n    }\n  }\n  return out;\n}"
+    },
+    {
+     "family": "ladder",
+     "hash": "aa12c6b2da",
+     "src": "function solve(input) {\n  const cur = input.cur, prev = input.prev;\n  let band;\n  if (cur >= 70) band = 'sev2';\n  else if (cur >= 40) band = 'sev3';\n  else band = 'quiet';\n  const has = (prev !== null && prev !== undefined);\n  return {\n    band,\n    page_sev2: has && cur >= 70 && prev < 70,\n    page_sev3: has && cur >= 40 && cur < 70 && prev < 40,\n    resolve: has && cur < 50 && prev >= 50,\n  };\n}"
+    }
+   ],
+   "record": 1,
+   "diversity": 0.58453,
+   "stats": {
+    "caught": 0,
+    "mimic": 189,
+    "divergent": 0,
+    "alien": 3,
+    "crowned": 3,
+    "systwo": 0,
+    "sheet_host_disagree": 192
+   },
+   "forge": {
+    "probes": 40,
+    "scarred": 0,
+    "budget": 40,
+    "rounds": 24,
+    "kinds": {
+     "base": 15,
+     "random": 2,
+     "boundary": 7,
+     "quantum-mock": 8,
+     "rare": 6,
+     "trickle": 2
+    }
+   },
+   "chain_ok": true,
+   "chain_links": 216,
+   "curve": [
+    {
+     "gen": 1,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 33,
+     "budget": 24,
+     "archive": 1,
+     "record": 1,
+     "diversity": 0,
+     "axis": "auto",
+     "crowned": true
+    },
+    {
+     "gen": 2,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 24,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.50298,
+     "axis": "auto",
+     "crowned": true
+    },
+    {
+     "gen": 3,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 24,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.50298,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 4,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 24,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.50298,
+     "axis": "dial",
+     "crowned": false
+    },
+    {
+     "gen": 5,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 24,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.50298,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 6,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 27,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.50298,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 7,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 30,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.50298,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 8,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 33,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.58453,
+     "axis": "speciate",
+     "crowned": true
+    },
+    {
+     "gen": 9,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 33,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.58453,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 10,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 33,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.58453,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 11,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 33,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.58453,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 12,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 37,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.58453,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 13,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.58453,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 14,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.58453,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 15,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.58453,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 16,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.58453,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 17,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.58453,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 18,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.58453,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 19,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.58453,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 20,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.58453,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 21,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.58453,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 22,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.58453,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 23,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.58453,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 24,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 40,
+     "budget": 40,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.58453,
+     "axis": "speciate",
+     "crowned": false
+    }
+   ],
+   "elapsed_ms": 2800
+  },
+  {
+   "target": "witness_fnv",
+   "title": "Witness idiom — fnv-1a-64 hex",
+   "gens": 24,
+   "archive": [
+    {
+     "family": "bigint_fold",
+     "hash": "aa28e37705",
+     "novelty": 1,
+     "behav": 1,
+     "struct": 1,
+     "voice": "mech",
+     "gen": 1,
+     "corruption": 0.3,
+     "src_bytes": 276
+    },
+    {
+     "family": "hilo32",
+     "hash": "3d237a99ef",
+     "novelty": 0.84789,
+     "behav": 1,
+     "struct": 0.5654,
+     "voice": "mech",
+     "gen": 13,
+     "corruption": 0.15,
+     "src_bytes": 526
+    },
+    {
+     "family": "word_pairs",
+     "hash": "9a04940bda",
+     "novelty": 0.84472,
+     "behav": 1,
+     "struct": 0.55635,
+     "voice": "mech",
+     "gen": 9,
+     "corruption": 0.15,
+     "src_bytes": 440
+    },
+    {
+     "family": "bigint_fold",
+     "hash": "1a40c09143",
+     "novelty": 0.67713,
+     "behav": 1,
+     "struct": 0.07751,
+     "voice": "mech",
+     "gen": 1,
+     "corruption": 0.3,
+     "src_bytes": 282
+    }
+   ],
+   "elites_src": [
+    {
+     "family": "bigint_fold",
+     "hash": "aa28e37705",
+     "src": "function solve(input) {\n  const s = input.text;\n  const P = 0x100000001b3n, M = 0xffffffffffffffffn;\n  let acc = 0xcbf29ce484222325n;\n  for (let i = 0; i < s.length; i++) {\n    acc = (acc ^ BigInt(s.charCodeAt(i))) * P;\n  }\n  return (acc & M).toString(16).padStart(16, '0');\n}"
+    },
+    {
+     "family": "hilo32",
+     "hash": "3d237a99ef",
+     "src": "function solve(input) {\n  const s = input.text;\n  let hi = 0xcbf29ce4, lo = 0x84222325;\n  for (let i = 0; i < s.length; i++) {\n    const cc = s.charCodeAt(i);\n    lo = (lo ^ cc) >>> 0;\n    const T = hi * 435 + lo * 256;\n    const m = lo * 435;\n    const newLo = m % 4294967296;\n    const c = (m - newLo) / 4294967296;\n    const T0 = T % 4294967296;\n    hi = (T0 + c) % 4294967296;\n    lo = newLo;\n  }\n  const H = hi.toString(16).padStart(8, '0');\n  const L = lo.toString(16).padStart(8, '0');\n  return (H + L).toLowerCase();\n}"
+    },
+    {
+     "family": "word_pairs",
+     "hash": "9a04940bda",
+     "src": "function solve(input) {\n  const s = input.text;\n  let h = 0xcbf29ce484222325n;\n  const P = 0x100000001b3n, M = 0xffffffffffffffffn;\n  const step = (ch) => { h = ((h ^ BigInt(ch.charCodeAt(0))) * P) & M; };\n  for (let i = 0; i < s.length; i += 2) {\n    const a = s[i], b = s[i + 1];\n    if (false) { if (b !== undefined) step(b); step(a); }\n    else { step(a); if (b !== undefined) step(b); }\n  }\n  return h.toString(16).padStart(16, '0');\n}"
+    },
+    {
+     "family": "bigint_fold",
+     "hash": "1a40c09143",
+     "src": "function solve(input) {\n  const s = input.text;\n  const P = 0x100000001b3n, M = 0xffffffffffffffffn;\n  let acc = 0xcbf29ce484222325n;\n  for (let i = 0; i < s.length; i++) {\n    acc = ((acc ^ BigInt(s.charCodeAt(i))) * P) & M;\n  }\n  return (acc & M).toString(16).padStart(16, '0');\n}"
+    }
+   ],
+   "record": 1,
+   "diversity": 0.48677,
+   "stats": {
+    "caught": 0,
+    "mimic": 188,
+    "divergent": 0,
+    "alien": 4,
+    "crowned": 4,
+    "systwo": 0,
+    "sheet_host_disagree": 192
+   },
+   "forge": {
+    "probes": 36,
+    "scarred": 0,
+    "budget": 36,
+    "rounds": 24,
+    "kinds": {
+     "base": 8,
+     "random": 9,
+     "boundary": 7,
+     "quantum-mock": 7,
+     "rare": 3,
+     "trickle": 2
+    }
+   },
+   "chain_ok": true,
+   "chain_links": 216,
+   "curve": [
+    {
+     "gen": 1,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 33,
+     "budget": 24,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.07751,
+     "axis": "auto",
+     "crowned": true
+    },
+    {
+     "gen": 2,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 24,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.07751,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 3,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 24,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.07751,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 4,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 24,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.07751,
+     "axis": "dial",
+     "crowned": false
+    },
+    {
+     "gen": 5,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 27,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.07751,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 6,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 30,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.07751,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 7,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 33,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.07751,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 8,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.07751,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 9,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.39738,
+     "axis": "speciate",
+     "crowned": true
+    },
+    {
+     "gen": 10,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.39738,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 11,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.39738,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 12,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.39738,
+     "axis": "dial",
+     "crowned": false
+    },
+    {
+     "gen": 13,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 4,
+     "record": 1,
+     "diversity": 0.48677,
+     "axis": "speciate",
+     "crowned": true
+    },
+    {
+     "gen": 14,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 4,
+     "record": 1,
+     "diversity": 0.48677,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 15,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 4,
+     "record": 1,
+     "diversity": 0.48677,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 16,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 4,
+     "record": 1,
+     "diversity": 0.48677,
+     "axis": "dial",
+     "crowned": false
+    },
+    {
+     "gen": 17,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 4,
+     "record": 1,
+     "diversity": 0.48677,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 18,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 4,
+     "record": 1,
+     "diversity": 0.48677,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 19,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 4,
+     "record": 1,
+     "diversity": 0.48677,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 20,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 4,
+     "record": 1,
+     "diversity": 0.48677,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 21,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 4,
+     "record": 1,
+     "diversity": 0.48677,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 22,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 4,
+     "record": 1,
+     "diversity": 0.48677,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 23,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 4,
+     "record": 1,
+     "diversity": 0.48677,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 24,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 4,
+     "record": 1,
+     "diversity": 0.48677,
+     "axis": "speciate",
+     "crowned": false
+    }
+   ],
+   "elapsed_ms": 2987
+  },
+  {
+   "target": "cosine_sparse",
+   "title": "Ocean recall — sparse integer cosine",
+   "gens": 24,
+   "archive": [
+    {
+     "family": "sorted_two_pointer",
+     "hash": "d3e5fd7d58",
+     "novelty": 1,
+     "behav": 1,
+     "struct": 1,
+     "voice": "mech",
+     "gen": 1,
+     "corruption": 0.3,
+     "src_bytes": 563
+    },
+    {
+     "family": "a_key_scan",
+     "hash": "b5ad63c6e9",
+     "novelty": 0.84192,
+     "behav": 1,
+     "struct": 0.54833,
+     "voice": "mech",
+     "gen": 5,
+     "corruption": 0.3,
+     "src_bytes": 363
+    },
+    {
+     "family": "union_set",
+     "hash": "d952b7a8da",
+     "novelty": 0.82935,
+     "behav": 1,
+     "struct": 0.51243,
+     "voice": "mech",
+     "gen": 4,
+     "corruption": 0.1,
+     "src_bytes": 472
+    }
+   ],
+   "elites_src": [
+    {
+     "family": "sorted_two_pointer",
+     "hash": "d3e5fd7d58",
+     "src": "function solve(input) {\n  const a = input.a, b = input.b;\n  const ka = Object.keys(a).sort();\n  const kb = Object.keys(b).sort();\n  let i = 0, j = 0, dot = 0;\n  while (i < ka.length && j < kb.length) {\n    if (ka[i] === kb[j]) { dot += a[ka[i]] * b[kb[j]]; i++; j++; }\n    else if (ka[i] < kb[j]) { i++; }\n    else { j++; }\n  }\n  let na = 0;\n  for (const k of ka) { na += a[k] * a[k]; }\n  let nb = 0;\n  for (const k of kb) { nb += b[k] * b[k]; }\n  if (na === 0 || nb === 0) return 0;\n  return Math.round((dot / (Math.sqrt(na) * Math.sqrt(nb))) * 10000) / 10000;\n}"
+    },
+    {
+     "family": "a_key_scan",
+     "hash": "b5ad63c6e9",
+     "src": "function solve(input) {\n  const a = input.a, b = input.b;\n  let dot = 0, na = 0, nb = 0;\n  for (const k in a) { na += a[k] * a[k]; }\n  for (const k in b) { nb += b[k] * b[k]; }\n  if (na === 0 || nb === 0) return 0;\n  for (const k in a) { dot += a[k] * (b[k] || 0); }\n  const cos = dot / (Math.sqrt(na) * Math.sqrt(nb));\n  return Math.round(cos * 10000) / 10000;\n}"
+    },
+    {
+     "family": "union_set",
+     "hash": "d952b7a8da",
+     "src": "function solve(input) {\n  const a = input.a, b = input.b;\n  const keys = new Set([...Object.keys(a), ...Object.keys(b)]);\n  let dot = 0, na = 0, nb = 0;\n  for (const k of keys) {\n    const x = a[k] || 0, y = b[k] || 0;\n    dot += x * y;\n  }\n  for (const k of Object.keys(a)) { na += a[k] * a[k]; }\n  for (const k of Object.keys(b)) { nb += b[k] * b[k]; }\n  if (na === 0 || nb === 0) return 0;\n  return Math.round((dot / (Math.sqrt(na) * Math.sqrt(nb))) * 10000) / 10000;\n}"
+    }
+   ],
+   "record": 1,
+   "diversity": 0.55151,
+   "stats": {
+    "caught": 0,
+    "mimic": 189,
+    "divergent": 0,
+    "alien": 3,
+    "crowned": 3,
+    "systwo": 0,
+    "sheet_host_disagree": 192
+   },
+   "forge": {
+    "probes": 36,
+    "scarred": 0,
+    "budget": 36,
+    "rounds": 24,
+    "kinds": {
+     "base": 7,
+     "random": 10,
+     "boundary": 7,
+     "quantum-mock": 7,
+     "rare": 3,
+     "trickle": 2
+    }
+   },
+   "chain_ok": true,
+   "chain_links": 216,
+   "curve": [
+    {
+     "gen": 1,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 33,
+     "budget": 24,
+     "archive": 1,
+     "record": 1,
+     "diversity": 0,
+     "axis": "auto",
+     "crowned": true
+    },
+    {
+     "gen": 2,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 24,
+     "archive": 1,
+     "record": 1,
+     "diversity": 0,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 3,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 24,
+     "archive": 1,
+     "record": 1,
+     "diversity": 0,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 4,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 24,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.51243,
+     "axis": "dial",
+     "crowned": true
+    },
+    {
+     "gen": 5,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 24,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.55151,
+     "axis": "auto",
+     "crowned": true
+    },
+    {
+     "gen": 6,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 24,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.55151,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 7,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 24,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.55151,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 8,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 24,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.55151,
+     "axis": "dial",
+     "crowned": false
+    },
+    {
+     "gen": 9,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 27,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.55151,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 10,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 30,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.55151,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 11,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 33,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.55151,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 12,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.55151,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 13,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.55151,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 14,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.55151,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 15,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.55151,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 16,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.55151,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 17,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.55151,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 18,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.55151,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 19,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.55151,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 20,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.55151,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 21,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.55151,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 22,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.55151,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 23,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.55151,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 24,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.55151,
+     "axis": "speciate",
+     "crowned": false
+    }
+   ],
+   "elapsed_ms": 3233
+  },
+  {
+   "target": "hand_eval5",
+   "title": "Hold’em — 5-card best class + kickers",
+   "gens": 24,
+   "archive": [
+    {
+     "family": "bit_count_scan",
+     "hash": "e0b651489c",
+     "novelty": 1,
+     "behav": 1,
+     "struct": 1,
+     "voice": "mech",
+     "gen": 1,
+     "corruption": 0.3,
+     "src_bytes": 1735
+    },
+    {
+     "family": "count_entries",
+     "hash": "4c8209d42c",
+     "novelty": 0.82865,
+     "behav": 1,
+     "struct": 0.51042,
+     "voice": "mech",
+     "gen": 5,
+     "corruption": 0.3,
+     "src_bytes": 1484
+    },
+    {
+     "family": "sorted_runs",
+     "hash": "4b916d85be",
+     "novelty": 0.82459,
+     "behav": 1,
+     "struct": 0.49882,
+     "voice": "mech",
+     "gen": 2,
+     "corruption": 0.3,
+     "src_bytes": 1614
+    }
+   ],
+   "elites_src": [
+    {
+     "family": "bit_count_scan",
+     "hash": "e0b651489c",
+     "src": "function solve(input) {\n  const RV = { '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, 'T': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14 };\n  const mult = new Array(15).fill(0);\n  const suits = {};\n  for (const c of input.cards) {\n    mult[RV[c[0]]]++;\n    suits[c[1]] = (suits[c[1]] || 0) + 1;\n  }\n  const flush = Object.keys(suits).some((s) => suits[s] === 5);\n  const groups = [];\n  for (let r = 14; r >= 2; r--) {\n    if (mult[r]) groups.push([r, mult[r]]);\n  }\n  let sHi = 0;\n  for (let hi = 14; hi >= 6; hi--) {\n    let ok = true;\n    for (let r = hi; r > hi - 5; r--) if (!mult[r]) { ok = false; break; }\n    if (ok) { sHi = hi; break; }\n  }\n  if (!sHi && 5 && mult[14] && mult[5] && mult[4] && mult[3] && mult[2]) sHi = 5;\n  const trips = groups.filter((g) => g[1] === 3).length;\n  const pairs = groups.filter((g) => g[1] === 2).map((g) => g[0]).sort((a, b) => b - a);\n  const quads = groups.filter((g) => g[1] === 4).map((g) => g[0]);\n  const tripRank = groups.filter((g) => g[1] === 3).map((g) => g[0]);\n  const singles = groups.filter((g) => g[1] === 1).map((g) => g[0]);\n  if (flush && sHi) return { cat: 8, kickers: [sHi] };\n  if (quads.length) return { cat: 7, kickers: [quads[0], singles[0]] };\n  if (trips && pairs.length) return { cat: 6, kickers: [tripRank[0], pairs[0]] };\n  if (flush) return { cat: 5, kickers: groups.map((g) => g[0]).slice(0, 5) };\n  if (sHi) return { cat: 4, kickers: [sHi] };\n  if (trips) return { cat: 3, kickers: [tripRank[0], ...singles.slice(0, 2)] };\n  if (pairs.length >= 2) return { cat: 2, kickers: [pairs[0], pairs[1], singles[0]] };\n  if (pairs.length === 1) return { cat: 1, kickers: [pairs[0], ...singles.slice(0, 3)] };\n  return { cat: 0, kickers: singles.slice(0, 5) };\n}"
+    },
+    {
+     "family": "count_entries",
+     "hash": "4c8209d42c",
+     "src": "function solve(input) {\n  const RV = { '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, 'T': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14 };\n  const rs = input.cards.map((c) => RV[c[0]]);\n  const flush = input.cards.every((c) => c[1] === input.cards[0][1]);\n  const cnt = {};\n  for (const r of rs) cnt[r] = (cnt[r] || 0) + 1;\n  const groups = Object.entries(cnt).map((e) => [Number(e[0]), e[1]])\n    .sort((x, y) => (y[1] - x[1]) || (y[0] - x[0]));\n  const uniq = [...new Set(rs)].sort((a, b) => b - a);\n  let straightHi = 0;\n  if (uniq.length === 5) {\n    if (uniq[0] - uniq[4] === 4) straightHi = uniq[0];\n    else if ((uniq[0] === 14 && uniq[1] === 5 && uniq[4] === 2)) straightHi = 5;\n  }\n  const seq = flush && straightHi ? [8] : groups[0][1] === 4 ? [7]\n    : groups[0][1] === 3 && groups[1][1] === 2 ? [6] : flush ? [5]\n    : straightHi ? [4] : groups[0][1] === 3 ? [3]\n    : groups[0][1] === 2 && groups[1][1] === 2 ? [2]\n    : groups[0][1] === 2 ? [1] : [0];\n  const cat = seq[0];\n  if (cat === 8 || cat === 4) return { cat, kickers: [straightHi] };\n  if (cat === 7 || cat === 6) return { cat, kickers: [groups[0][0], groups[1][0]] };\n  if (cat === 5 || cat === 0) return { cat, kickers: uniq.slice(0, 5) };\n  if (cat === 3) return { cat, kickers: [groups[0][0], groups[1][0], groups[2][0]] };\n  if (cat === 2) return { cat, kickers: [groups[0][0], groups[1][0], groups[2][0]] };\n  return { cat, kickers: [groups[0][0], groups[1][0], groups[2][0], groups[3][0]] };\n}"
+    },
+    {
+     "family": "sorted_runs",
+     "hash": "4b916d85be",
+     "src": "function solve(input) {\n  const RV = { '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, 'T': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14 };\n  const rs = input.cards.map((c) => RV[c[0]]).sort((a, b) => b - a);\n  const flush = input.cards.every((c) => c[1] === input.cards[0][1]);\n  const runs = [];\n  for (const r of rs) {\n    if (runs.length && runs[runs.length - 1][0] === r) runs[runs.length - 1][1]++;\n    else runs.push([r, 1]);\n  }\n  const u = runs.map((x) => x[0]);\n  let sHi = 0;\n  if (u.length === 5) {\n    sHi = (u[0] - u[4] === 4) ? u[0] : 0;\n    if (!sHi && u[0] === 14 && u[1] === 5 && u[4] === 2) sHi = 5;\n  }\n  \n  const shape = runs.map((x) => x[1]).sort().join('');\n  const pairs = runs.filter((x) => x[1] === 2).map((x) => x[0]).sort((a, b) => b - a);\n  const trips = runs.filter((x) => x[1] === 3).map((x) => x[0]);\n  const quads = runs.filter((x) => x[1] === 4).map((x) => x[0]);\n  const singles = runs.filter((x) => x[1] === 1).map((x) => x[0]).sort((a, b) => b - a);\n  if (flush && sHi) return { cat: 8, kickers: [sHi] };\n  if (quads.length) return { cat: 7, kickers: [quads[0], u.find((r) => r !== quads[0])] };\n  if (trips.length && pairs.length) return { cat: 6, kickers: [trips[0], pairs[0]] };\n  if (flush) return { cat: 5, kickers: u.slice(0, 5) };\n  if (sHi) return { cat: 4, kickers: [sHi] };\n  if (trips.length) return { cat: 3, kickers: [trips[0], ...singles] };\n  if (pairs.length >= 2) return { cat: 2, kickers: [pairs[0], pairs[1], singles[0]] };\n  if (pairs.length === 1) return { cat: 1, kickers: [pairs[0], ...singles] };\n  return { cat: 0, kickers: u.slice(0, 5) };\n}"
+    }
+   ],
+   "record": 1,
+   "diversity": 0.52791,
+   "stats": {
+    "caught": 0,
+    "mimic": 189,
+    "divergent": 0,
+    "alien": 3,
+    "crowned": 3,
+    "systwo": 0,
+    "sheet_host_disagree": 192
+   },
+   "forge": {
+    "probes": 44,
+    "scarred": 0,
+    "budget": 44,
+    "rounds": 24,
+    "kinds": {
+     "base": 10,
+     "random": 7,
+     "boundary": 7,
+     "quantum-mock": 10,
+     "rare": 6,
+     "trickle": 4
+    }
+   },
+   "chain_ok": true,
+   "chain_links": 216,
+   "curve": [
+    {
+     "gen": 1,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 33,
+     "budget": 24,
+     "archive": 1,
+     "record": 1,
+     "diversity": 0,
+     "axis": "auto",
+     "crowned": true
+    },
+    {
+     "gen": 2,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 42,
+     "budget": 24,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.49882,
+     "axis": "auto",
+     "crowned": true
+    },
+    {
+     "gen": 3,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 24,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.49882,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 4,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 24,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.49882,
+     "axis": "dial",
+     "crowned": false
+    },
+    {
+     "gen": 5,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 24,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.52791,
+     "axis": "auto",
+     "crowned": true
+    },
+    {
+     "gen": 6,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 24,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.52791,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 7,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 24,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.52791,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 8,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 24,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.52791,
+     "axis": "dial",
+     "crowned": false
+    },
+    {
+     "gen": 9,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 27,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.52791,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 10,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 30,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.52791,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 11,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 33,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.52791,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 12,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 37,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.52791,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 13,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 41,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.52791,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 14,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 44,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.52791,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 15,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 44,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.52791,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 16,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 44,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.52791,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 17,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 44,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.52791,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 18,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 44,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.52791,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 19,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 44,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.52791,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 20,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 44,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.52791,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 21,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 44,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.52791,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 22,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 44,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.52791,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 23,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 44,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.52791,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 24,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 44,
+     "budget": 44,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.52791,
+     "axis": "speciate",
+     "crowned": false
+    }
+   ],
+   "elapsed_ms": 3931
+  },
+  {
+   "target": "gate_law",
+   "title": "Cortex chord — the gate law",
+   "gens": 24,
+   "archive": [
+    {
+     "family": "math_max_ternary",
+     "hash": "07c8e72d59",
+     "novelty": 1,
+     "behav": 1,
+     "struct": 1,
+     "voice": "mech",
+     "gen": 1,
+     "corruption": 0.3,
+     "src_bytes": 197
+    },
+    {
+     "family": "sorted_index",
+     "hash": "9c294496f8",
+     "novelty": 0.86861,
+     "behav": 1,
+     "struct": 0.62461,
+     "voice": "mech",
+     "gen": 4,
+     "corruption": 0.1,
+     "src_bytes": 278
+    },
+    {
+     "family": "reduce_carrier",
+     "hash": "f177d74468",
+     "novelty": 0.86043,
+     "behav": 1,
+     "struct": 0.60123,
+     "voice": "mech",
+     "gen": 2,
+     "corruption": 0.3,
+     "src_bytes": 307
+    }
+   ],
+   "elites_src": [
+    {
+     "family": "math_max_ternary",
+     "hash": "07c8e72d59",
+     "src": "function solve(input) {\n  const pmax = Math.max(...input.probs);\n  const mode = (pmax >= 0.55 && input.doubt < 0.5) ? 'accept'\n    : (pmax >= 0.35 ? 'flag' : 'escalate');\n  return { mode, pmax };\n}"
+    },
+    {
+     "family": "sorted_index",
+     "hash": "9c294496f8",
+     "src": "function solve(input) {\n  const sorted = [...input.probs].sort((a, b) => b - a);\n  const pmax = sorted[0];\n  let idx = (pmax >= 0.35) + (pmax >= 0.55);\n  if (idx === 2 && input.doubt >= 0.5) idx = 1;\n  const mode = ['escalate', 'flag', 'accept'][idx];\n  return { mode, pmax };\n}"
+    },
+    {
+     "family": "reduce_carrier",
+     "hash": "f177d74468",
+     "src": "function solve(input) {\n  const st = input.probs.reduce(\n    (acc, p) => {\n      const m = p > acc.pmax ? p : acc.pmax;\n      return { pmax: m, mode: (m >= 0.55 && input.doubt < 0.5) ? 'accept' : (m >= 0.35 ? 'flag' : 'escalate') };\n    },\n    { pmax: input.probs[0], mode: 'escalate' },\n  );\n  return st;\n}"
+    }
+   ],
+   "record": 1,
+   "diversity": 0.61911,
+   "stats": {
+    "caught": 0,
+    "mimic": 189,
+    "divergent": 0,
+    "alien": 3,
+    "crowned": 3,
+    "systwo": 0,
+    "sheet_host_disagree": 192
+   },
+   "forge": {
+    "probes": 36,
+    "scarred": 0,
+    "budget": 36,
+    "rounds": 24,
+    "kinds": {
+     "base": 8,
+     "random": 9,
+     "boundary": 7,
+     "quantum-mock": 7,
+     "rare": 3,
+     "trickle": 2
+    }
+   },
+   "chain_ok": true,
+   "chain_links": 216,
+   "curve": [
+    {
+     "gen": 1,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 33,
+     "budget": 24,
+     "archive": 1,
+     "record": 1,
+     "diversity": 0,
+     "axis": "auto",
+     "crowned": true
+    },
+    {
+     "gen": 2,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 24,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.60123,
+     "axis": "auto",
+     "crowned": true
+    },
+    {
+     "gen": 3,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 24,
+     "archive": 2,
+     "record": 1,
+     "diversity": 0.60123,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 4,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 24,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.61911,
+     "axis": "dial",
+     "crowned": true
+    },
+    {
+     "gen": 5,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 24,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.61911,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 6,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 24,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.61911,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 7,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 24,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.61911,
+     "axis": "auto",
+     "crowned": false
+    },
+    {
+     "gen": 8,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 27,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.61911,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 9,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 30,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.61911,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 10,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 33,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.61911,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 11,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.61911,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 12,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.61911,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 13,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.61911,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 14,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.61911,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 15,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.61911,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 16,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.61911,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 17,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.61911,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 18,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.61911,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 19,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.61911,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 20,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.61911,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 21,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.61911,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 22,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.61911,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 23,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.61911,
+     "axis": "speciate",
+     "crowned": false
+    },
+    {
+     "gen": 24,
+     "fakes": 0,
+     "cand_n": 8,
+     "probes": 36,
+     "budget": 36,
+     "archive": 3,
+     "record": 1,
+     "diversity": 0.61911,
+     "axis": "speciate",
+     "crowned": false
+    }
+   ],
+   "elapsed_ms": 4062
+  }
+ ]
+}

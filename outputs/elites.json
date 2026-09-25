@@ -1,0 +1,50 @@
+[
+ {
+  "family": "bigint_fold",
+  "hash": "aa28e37705",
+  "src": "function solve(input) {\n  const s = input.text;\n  const P = 0x100000001b3n, M = 0xffffffffffffffffn;\n  let acc = 0xcbf29ce484222325n;\n  for (let i = 0; i < s.length; i++) {\n    acc = (acc ^ BigInt(s.charCodeAt(i))) * P;\n  }\n  return (acc & M).toString(16).padStart(16, '0');\n}",
+  "mind": "mech"
+ },
+ {
+  "family": "traded:hilo32",
+  "hash": "trade-3d237a99ef",
+  "src": "function solve(input) {\n  const s = input.text;\n  let hi = 0xcbf29ce4, lo = 0x84222325;\n  for (let i = 0; i < s.length; i++) {\n    const cc = s.charCodeAt(i);\n    lo = (lo ^ cc) >>> 0;\n    const T = hi * 435 + lo * 256;\n    const m = lo * 435;\n    const newLo = m % 4294967296;\n    const c = (m - newLo) / 4294967296;\n    const T0 = T % 4294967296;\n    hi = (T0 + c) % 4294967296;\n    lo = newLo;\n  }\n  const H = hi.toString(16).padStart(8, '0');\n  const L = lo.toString(16).padStart(8, '0');\n  return (H + L).toLowerCase();\n}",
+  "mind": "trade:B"
+ },
+ {
+  "family": "word_pairs",
+  "hash": "9a04940bda",
+  "src": "function solve(input) {\n  const s = input.text;\n  let h = 0xcbf29ce484222325n;\n  const P = 0x100000001b3n, M = 0xffffffffffffffffn;\n  const step = (ch) => { h = ((h ^ BigInt(ch.charCodeAt(0))) * P) & M; };\n  for (let i = 0; i < s.length; i += 2) {\n    const a = s[i], b = s[i + 1];\n    if (false) { if (b !== undefined) step(b); step(a); }\n    else { step(a); if (b !== undefined) step(b); }\n  }\n  return h.toString(16).padStart(16, '0');\n}",
+  "mind": "mech"
+ },
+ {
+  "family": "bigint_fold",
+  "hash": "1a40c09143",
+  "src": "function solve(input) {\n  const s = input.text;\n  const P = 0x100000001b3n, M = 0xffffffffffffffffn;\n  let acc = 0xcbf29ce484222325n;\n  for (let i = 0; i < s.length; i++) {\n    acc = ((acc ^ BigInt(s.charCodeAt(i))) * P) & M;\n  }\n  return (acc & M).toString(16).padStart(16, '0');\n}",
+  "mind": "mech"
+ },
+ {
+  "family": "word_pairs",
+  "hash": "9a04940bda",
+  "src": "function solve(input) {\n  const s = input.text;\n  let h = 0xcbf29ce484222325n;\n  const P = 0x100000001b3n, M = 0xffffffffffffffffn;\n  const step = (ch) => { h = ((h ^ BigInt(ch.charCodeAt(0))) * P) & M; };\n  for (let i = 0; i < s.length; i += 2) {\n    const a = s[i], b = s[i + 1];\n    if (false) { if (b !== undefined) step(b); step(a); }\n    else { step(a); if (b !== undefined) step(b); }\n  }\n  return h.toString(16).padStart(16, '0');\n}",
+  "mind": "mech"
+ },
+ {
+  "family": "hilo32",
+  "hash": "3d237a99ef",
+  "src": "function solve(input) {\n  const s = input.text;\n  let hi = 0xcbf29ce4, lo = 0x84222325;\n  for (let i = 0; i < s.length; i++) {\n    const cc = s.charCodeAt(i);\n    lo = (lo ^ cc) >>> 0;\n    const T = hi * 435 + lo * 256;\n    const m = lo * 435;\n    const newLo = m % 4294967296;\n    const c = (m - newLo) / 4294967296;\n    const T0 = T % 4294967296;\n    hi = (T0 + c) % 4294967296;\n    lo = newLo;\n  }\n  const H = hi.toString(16).padStart(8, '0');\n  const L = lo.toString(16).padStart(8, '0');\n  return (H + L).toLowerCase();\n}",
+  "mind": "mech"
+ },
+ {
+  "family": "traded:bigint_fold",
+  "hash": "trade-aa28e37705",
+  "src": "function solve(input) {\n  const s = input.text;\n  const P = 0x100000001b3n, M = 0xffffffffffffffffn;\n  let acc = 0xcbf29ce484222325n;\n  for (let i = 0; i < s.length; i++) {\n    acc = (acc ^ BigInt(s.charCodeAt(i))) * P;\n  }\n  return (acc & M).toString(16).padStart(16, '0');\n}",
+  "mind": "trade:A"
+ },
+ {
+  "family": "traded:bigint_fold",
+  "hash": "trade-1a40c09143",
+  "src": "function solve(input) {\n  const s = input.text;\n  const P = 0x100000001b3n, M = 0xffffffffffffffffn;\n  let acc = 0xcbf29ce484222325n;\n  for (let i = 0; i < s.length; i++) {\n    acc = ((acc ^ BigInt(s.charCodeAt(i))) * P) & M;\n  }\n  return (acc & M).toString(16).padStart(16, '0');\n}",
+  "mind": "trade:A"
+ }
+]

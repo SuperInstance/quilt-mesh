@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>quilt-mesh — the Poly-GAN</title>
+<meta property="og:title" content="quilt-mesh — the Poly-GAN">
+<meta property="og:description" content="Agent minds trade bred logic across doctrine borders. Receipts or it didn't happen.">
+<style>
+  :root { --ink:#1a2332; --paper:#fbfaf7; --teal:#3d8a7d; --blue:#2f6f8f; --orange:#c96f2e; --gray:#9aa1ab; --red:#a94438; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--paper); color: var(--ink); font: 16px/1.65 Georgia, 'Noto Serif', serif; }
+  .hero { min-height: 46vh; display: grid; place-items: center; text-align: center;
+          background: linear-gradient(180deg, #0e1621 0%, #16222f 100%); color: #eef2f4; padding: 48px 20px; }
+  .hero img.mark { width: 96px; height: 96px; border-radius: 18px; box-shadow: 0 8px 40px rgba(61,138,125,.35); }
+  .hero h1 { font-size: clamp(28px, 5vw, 44px); margin: 18px 0 6px; letter-spacing: .5px; }
+  .hero p  { color: #b9c4cc; max-width: 620px; margin: 0 auto; font-size: 17px; }
+  .hero .tag { display:inline-block; margin-top: 14px; padding: 4px 12px; border: 1px solid #2e3f4d; border-radius: 999px;
+               color: #7fd4c2; font: 12px/1.6 ui-monospace, monospace; letter-spacing: 1.5px; }
+  main { max-width: 880px; margin: 0 auto; padding: 40px 20px 72px; }
+  h2 { font-family: 'Noto Sans', sans-serif; font-size: 13px; letter-spacing: 2.5px; text-transform: uppercase;
+       color: var(--teal); margin: 40px 0 10px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .card { border: 1px solid #e5e2da; border-radius: 12px; padding: 18px; background: #fff; }
+  .card h3 { font-family: 'Noto Sans', sans-serif; font-size: 16px; margin-bottom: 6px; }
+  .card p { color: #4d5a66; font-size: 14.5px; }
+  .card a { color: var(--blue); text-decoration: none; font: 13px ui-monospace, monospace; }
+  .card a:hover { text-decoration: underline; }
+  .stat { font: 34px/1 'Noto Sans', sans-serif; color: var(--ink); margin-bottom: 2px; }
+  .stat small { display:block; font: 11px ui-monospace, monospace; color: var(--gray); letter-spacing: 1.2px; text-transform: uppercase; }
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 14px; margin: 8px 0 6px; }
+  pre { background: #10202b; color: #cfe3dd; padding: 14px 16px; border-radius: 10px; font: 13px ui-monospace, monospace; overflow-x: auto; }
+  .law { border-left: 3px solid var(--orange); padding: 8px 14px; background: #fff; border-radius: 0 10px 10px 0;
+         margin: 10px 0; font-size: 15px; }
+  .law b { font-family: 'Noto Sans', sans-serif; font-size: 13.5px; }
+  footer { text-align:center; color: var(--gray); font-size: 13px; padding: 30px 0 44px; }
+  a { color: var(--blue); }
+</style>
+</head>
+<body>
+<div class="hero">
+  <div>
+    <img class="mark" src="splash.png" alt="quilt-mesh" onerror="this.style.display='none'">
+    <h1>quilt-mesh</h1>
+    <p>Two minds with different doctrines breed logic, then trade patches across the border. The receiver's forge is the only judge.</p>
+    <span class="tag">POLY-GAN · RECEIPTED · REPLAYABLE</span>
+  </div>
+</div>
+<main>
+  <h2>The record so far</h2>
+  <div class="facts">
+    <div class="stat">7<small>trade attempts</small></div>
+    <div class="stat">3<small>woven at borders</small></div>
+    <div class="stat">0/2<small>re-trades bounced</small></div>
+    <div class="stat">10<small>foundry targets mapped</small></div>
+  </div>
+
+  <h2>The four laws (v2)</h2>
+  <div class="law"><b>Doctrine-diversity, not seed-diversity.</b> Same doctrine + different seeds = byte-identical elites. Real trade requires houses that believe different things.</div>
+  <div class="law"><b>The receiver judges everything.</b> Sender receipts travel as CLAIMS; the receiver's forge is the only judge at the border.</div>
+  <div class="law"><b>Re-trades are mimics.</b> A patch that came from a trade is barred from re-export as new blood (measured: 0/2 bounce).</div>
+  <div class="law"><b>Shared-doctrine trades bounce.</b> If both houses breed the same family, there is nothing to exchange.</div>
+
+  <h2>The documents</h2>
+  <div class="grid">
+    <div class="card"><h3>POLY-GAN.md</h3><p>The patch-trade protocol: rules, the v1 lesson, verdict logic, seeds for the next rounds.</p><a href="https://github.com/SuperInstance/quilt-mesh/blob/main/POLY-GAN.md">read on GitHub →</a></div>
+    <div class="card"><h3>DRIFT.md</h3><p>Doctrine drift, measured: archive saturation timing, border immunity, and the honest "no naturalization yet".</p><a href="https://github.com/SuperInstance/quilt-mesh/blob/main/DRIFT.md">read on GitHub →</a></div>
+    <div class="card"><h3>ECOSYSTEM.md</h3><p>The 100-repo mesh map: layers, seams that already hold, and the compass for what to build next.</p><a href="https://github.com/SuperInstance/quilt-mesh/blob/main/ECOSYSTEM.md">read on GitHub →</a></div>
+    <div class="card"><h3>crosswalk.mjs</h3><p>Canary × loom hash-domain crosswalk: ASCII byte-exact agreements, unicode diverges documented, sealed.</p><a href="https://github.com/SuperInstance/quilt-mesh/blob/main/mesh/crosswalk.mjs">read the receipt →</a></div>
+  </div>
+
+  <h2>Run it</h2>
+<pre>git clone https://github.com/SuperInstance/quilt-mesh && cd quilt-mesh
+node mesh/crosswalk.mjs        # the hash-domain crosswalk, sealed
+node mesh/bazaar.mjs           # the Poly-GAN bazaar (offline, deterministic)
+node doctrine_drift.mjs        # drift measurement, 18 receipted rows</pre>
+
+  <h2>Where this sits</h2>
+  <p>The mesh is the trade layer of the SuperInstance quilt: the <a href="https://github.com/SuperInstance/loom-core">loom-core</a> foundry breeds logic;
+     <a href="https://github.com/SuperInstance/quilt-arena">quilt-arena</a> minds read hidden laws under probe rations (the inverse oracle);
+     the mesh is where their outputs meet, trade, and get judged. <a href="https://superinstance.github.io/">Front door →</a></p>
+</main>
+<footer>SuperInstance quilt-mesh · receipts or it didn't happen</footer>
+</body>
+</html>

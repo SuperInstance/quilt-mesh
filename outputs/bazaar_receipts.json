@@ -1,0 +1,141 @@
+{
+ "kind": "poly-gan-bazaar",
+ "date": "2026-09-25T21:50:34.629Z",
+ "contract": "witness_fnv",
+ "minds": {
+  "A": {
+   "seed": 4242,
+   "doctrine": [
+    "bigint_fold",
+    "word_pairs"
+   ]
+  },
+  "B": {
+   "seed": 9001,
+   "doctrine": [
+    "hilo32",
+    "word_pairs"
+   ]
+  }
+ },
+ "trades": 7,
+ "woven": 3,
+ "caught_in_transit": 4,
+ "bloodlines": {
+  "A": [
+   2,
+   3
+  ],
+  "B": [
+   2,
+   3
+  ],
+  "solo_control": 2
+ },
+ "crossed": [
+  {
+   "from": "A",
+   "to": "B",
+   "family": "bigint_fold",
+   "hash": "aa28e37705",
+   "func": 1,
+   "woven": true,
+   "why": "woven (struct-from-receiver=0.55827, receiver-novelty=0.84539)"
+  },
+  {
+   "from": "A",
+   "to": "B",
+   "family": "bigint_fold",
+   "hash": "1a40c09143",
+   "func": 1,
+   "woven": true,
+   "why": "woven (struct-from-receiver=0.07751, receiver-novelty=0.02713)"
+  },
+  {
+   "from": "B",
+   "to": "A",
+   "family": "hilo32",
+   "hash": "3d237a99ef",
+   "func": 1,
+   "woven": true,
+   "why": "woven (struct-from-receiver=0.5654, receiver-novelty=0.84789)"
+  }
+ ],
+ "delta": {
+  "traded": {
+   "A": 0,
+   "B": 0
+  },
+  "solo": 0,
+  "mean_traded": 0,
+  "note": "diversity deltas are context, not the headline — see the v1 lesson"
+ },
+ "v1_lesson": "seed-diversity is fake-diversity: mech breeding is deterministic per family, so minds with different seeds converge to identical elite sets. Doctrine-diversity (family subsets) is real-diversity.",
+ "verdict": "POLY-GAN EFFECT CONFIRMED — 3 bloodline(s) crossed doctrines (A→B:bigint_fold, A→B:bigint_fold, B→A:hilo32), receiver-side novelty 0.84539/0.02713/0.84789 — logic one house could never breed now lives in both",
+ "seal": "0x6cee228aa60e3d64",
+ "trade_log": [
+  {
+   "from": "A",
+   "to": "B",
+   "family": "bigint_fold",
+   "hash": "aa28e37705",
+   "func": 1,
+   "woven": true,
+   "why": "woven (struct-from-receiver=0.55827, receiver-novelty=0.84539)"
+  },
+  {
+   "from": "A",
+   "to": "B",
+   "family": "word_pairs",
+   "hash": "9a04940bda",
+   "func": 1,
+   "woven": false,
+   "why": "mimic to receiver's bloodline (struct=0)"
+  },
+  {
+   "from": "A",
+   "to": "B",
+   "family": "bigint_fold",
+   "hash": "1a40c09143",
+   "func": 1,
+   "woven": true,
+   "why": "woven (struct-from-receiver=0.07751, receiver-novelty=0.02713)"
+  },
+  {
+   "from": "B",
+   "to": "A",
+   "family": "word_pairs",
+   "hash": "9a04940bda",
+   "func": 1,
+   "woven": false,
+   "why": "mimic to receiver's bloodline (struct=0)"
+  },
+  {
+   "from": "B",
+   "to": "A",
+   "family": "hilo32",
+   "hash": "3d237a99ef",
+   "func": 1,
+   "woven": true,
+   "why": "woven (struct-from-receiver=0.5654, receiver-novelty=0.84789)"
+  },
+  {
+   "from": "B",
+   "to": "A",
+   "family": "traded:bigint_fold",
+   "hash": "trade-aa28e37705",
+   "func": 1,
+   "woven": false,
+   "why": "mimic to receiver's bloodline (struct=0)"
+  },
+  {
+   "from": "B",
+   "to": "A",
+   "family": "traded:bigint_fold",
+   "hash": "trade-1a40c09143",
+   "func": 1,
+   "woven": false,
+   "why": "mimic to receiver's bloodline (struct=0)"
+  }
+ ]
+}
