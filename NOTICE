@@ -1,0 +1,3 @@
+loom-core/quilt engine vendored: Apache-2.0, Copyright the quilt authors.
+Canary semantics vendored from SuperInstance/quilt-canary (canary.py, utf-8 byte domain), Apache-2.0.
+Bazaar contracts extracted from SuperInstance/quilt-loom loom/targets_fleet.mjs, Apache-2.0.

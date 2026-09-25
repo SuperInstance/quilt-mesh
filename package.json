@@ -1,0 +1,39 @@
+{
+  "name": "quilt-mesh",
+  "version": "0.1.0",
+  "description": "The SuperInstance mesh: cross-repo semantic crosswalks and the Poly-GAN bazaar where minds trade patch-samples of bred logic.",
+  "type": "module",
+  "main": "mesh/crosswalk.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./loom": "./src/loom.mjs",
+    "./forge": "./src/forge.mjs",
+    "./breeder": "./src/breeder.mjs",
+    "./receipts": "./src/receipts.mjs",
+    "./engine-lib": "./src/engine_lib.mjs"
+  },
+  "bin": {
+    "loom": "bin/loom.mjs"
+  },
+  "scripts": {
+    "test": "node test/smoke.mjs",
+    "example": "node bin/loom.mjs run examples/witness-fnv.mjs --gens 12 --seed 7"
+  },
+  "keywords": [
+    "gan",
+    "genetic-programming",
+    "reactive",
+    "spreadsheet",
+    "quilt",
+    "diversity",
+    "map-elites",
+    "adversarial"
+  ],
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "yaml": "^2.9.1"
+  }
+}
